@@ -59,6 +59,10 @@ vera:
     - 33 # Right garage door relay
     - 89 # Right garage door sensor
     - 90 # Left garage door sensor
+  lights:
+    - 8  # Garage overhead lights
+    - 19 # Office Floor Lamp
+    - 106 # Main floor bathroom light
 
 vacuum:
   - platform: roomba
