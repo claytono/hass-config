@@ -25,6 +25,9 @@ config:
 # Enables prometheus exporter
 prometheus:
 
+recorder:
+  db_url: !env_var DB_URL
+
 vera:
   vera_controller_url: http://172.19.74.180:3480
   exclude:
@@ -44,9 +47,41 @@ vera:
     - 89 # Right garage door sensor
     - 90 # Left garage door sensor
 
-homekit:
+# Exclude vera "armed" device switches
 
-base_url: http://hass.k.oneill.net
+
+vacuum:
+  - platform: roomba
+    host: Roomba-3143C91082324790.oneill.net
+    username: 3143C91082324790
+    password: !secret roomba_password
+    name: "Lord Derpington"
+
+ring:
+  username: !secret ring_username
+  password: !secret ring_password
+
+binary_sensor doorbell:
+  platform: ring
+
+camera doorbell:
+  platform: ring
+
+sensor doorbell:
+ platform: ring
+
+homekit:
+  filter:
+    exclude_entities:
+      - switch.luser_36
+      - switch.k2_98
+      - switch.k3_99
+      - switch.washing_machine_107
+      - switch.sump_pump_20
+      - switch.washlet_77
+
+http:
+  base_url: https://hass.k.oneill.net
 
 # Checks for available updates
 # Note: This component will send some information about your system to

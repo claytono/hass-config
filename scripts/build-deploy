@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+KUBE_DIR=${KUBE_DIR:-$HOME/src/kubernetes-config/hass}
+
+cd $KUBE_DIR
+
+exec gomplate \
+    --context "cm=$KUBE_DIR/configmap.yaml" \
+    --file "$KUBE_DIR/deploy.yaml.template" \
+    --out "$KUBE_DIR/deploy.yaml"
