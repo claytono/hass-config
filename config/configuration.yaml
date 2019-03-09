@@ -25,6 +25,18 @@ config:
 # Enables prometheus exporter
 prometheus:
 
+# Send notifications to Telegram
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_api_key
+    allowed_chat_ids:
+     - "-396790894"
+
+notify:
+ - name: "telegram"
+   platform: telegram
+   chat_id: "-396790894"
+
 recorder:
   db_url: !env_var DB_URL
 
@@ -46,9 +58,6 @@ vera:
     - 33 # Right garage door relay
     - 89 # Right garage door sensor
     - 90 # Left garage door sensor
-
-# Exclude vera "armed" device switches
-
 
 vacuum:
   - platform: roomba
