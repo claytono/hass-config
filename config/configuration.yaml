@@ -24,6 +24,7 @@ config:
 
 # Enables prometheus exporter
 prometheus:
+  namespace: hass
 
 # Send notifications to Telegram
 telegram_bot:
