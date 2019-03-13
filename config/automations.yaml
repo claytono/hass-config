@@ -14,6 +14,7 @@
       entity_id: vacuum.lord_derpington
 
 - alias: "Notify when washing machine is done"
+  hide_entity: true
   trigger:
     platform: state
     entity_id: sensor.washing_machine_status
@@ -24,6 +25,7 @@
         message: "Washing machine is done!"
 
 - alias: "Notify when washing machine enters spin cycle, almost done"
+  hide_entity: true
   trigger:
     platform: state
     entity_id: sensor.washing_machine_status
@@ -34,6 +36,7 @@
         message: "Washing machine is in the spin cycle, almost done!"
 
 - alias: "Desk up"
+  hide_entity: true
   trigger:
     platform: numeric_state
     entity_id: sensor.desk_watts
@@ -43,6 +46,7 @@
       entity_id: input_boolean.desk_up
 
 - alias: "Desk down"
+  hide_entity: true
   trigger:
     platform: numeric_state
     entity_id: sensor.desk_watts
