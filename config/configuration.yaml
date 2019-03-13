@@ -22,6 +22,9 @@ frontend:
 # Enables configuration UI
 config:
 
+recorder:
+  db_url: !env_var DB_URL
+
 # Enables prometheus exporter
 prometheus:
   namespace: hass
@@ -37,9 +40,6 @@ notify:
  - name: "telegram"
    platform: telegram
    chat_id: "-396790894"
-
-recorder:
-  db_url: !env_var DB_URL
 
 vera:
   vera_controller_url: http://172.19.74.180:3480
@@ -84,6 +84,17 @@ camera doorbell:
 sensor doorbell:
  platform: ring
 
+device_tracker:
+  - platform: unifi
+    host: unifi-cloudkey
+    username: hass
+    password: !secret unifi_password
+    verify_ssl: false
+    new_device_defaults:
+      track_new_devices: false
+
+person:
+
 homekit:
   filter:
     exclude_entities:
@@ -127,17 +138,53 @@ sun:
 # Sensors
 sensor:
   # Weather prediction
-  - platform: rest
-    resource: "http://veraplus.oneill.net:3480/data_request?id=variableget&DeviceNum=36&serviceId=urn:micasaverde-com:serviceId:EnergyMetering1&Variable=Watts"
-    method: GET
-    name: Power usage - luser
-    unit_of_measurement: "W"
+  - platform: template
+    sensors:
+      luser_watts:
+        value_template: >-
+          {{ state_attr('switch.luser_36', 'current_power_w') | default(0) }}
+        unit_of_measurement: "W"
+      k2_watts:
+        value_template: >-
+          {{ state_attr('switch.k2_98', 'current_power_w') | default(0) }}
+        unit_of_measurement: "W"
+      k3_watts:
+        value_template: >-
+          {{ state_attr('switch.k3_99', 'current_power_w') | default(0) }}
+        unit_of_measurement: "W"
+      desk_watts:
+        value_template: >-
+          {{ state_attr('switch.desk_43', 'current_power_w') | default(0) }}
+        unit_of_measurement: "W"
   - platform: template
     sensors:
       battery_front_door_lock:
         friendly_name: "Front Door Lock Battery"
         value_template: '{{ states.lock.front_door_lock_10.attributes.battery_level }}'
         unit_of_measurement: "%"
+  - platform: template
+    sensors:
+      washing_machine_watts:
+        friendly_name: "Washing Machine Power"
+        value_template: '{{ states.switch.washing_machine_107.attributes.current_power_w }}'
+        unit_of_measurement: "W"
+      washing_machine_status:
+        friendly_name: "Washing Machine Status"
+        value_template: >-
+          {% if states('sensor.washing_machine_watts') | int > 400 %}
+            Spin Cycle
+          {% elif states('sensor.washing_machine_watts') | int > 5 %}
+            Washing
+          {% else %}
+            Off
+          {% endif %}
+
+binary_sensor:
+  # This monitors if my laptop is docked at my desk, which is a good proxy for
+  # whether or not I'm sitting there.
+  - platform: ping
+    name: laptop-ethernet
+    host: hajnal-ethernet.oneill.net
 
 # Text to speech
 tts:
@@ -145,6 +192,9 @@ tts:
 
 # Cloud
 cloud:
+
+input_boolean: !include input_boolean.yaml
+#input_select: !include input_select.yaml
 
 group: !include groups.yaml
 automation: !include automations.yaml

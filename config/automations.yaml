@@ -1,1 +1,53 @@
-[]
+- alias: "Run vacuum at night"
+  trigger:
+    platform: time
+    at: '01:00:00'
+  action:
+    - service: notify.telegram
+      data:
+        message: "Starting vacuum"
+    - service: light.turn_on
+      entity_id: light.dining_room_light_108
+      data:
+        brightness_pct: 25
+    - service: vacuum.turn_on
+      entity_id: vacuum.lord_derpington
+
+- alias: "Notify when washing machine is done"
+  trigger:
+    platform: state
+    entity_id: sensor.washing_machine_status
+    to: 'Off'
+  action:
+    - service: notify.telegram
+      data:
+        message: "Washing machine is done!"
+
+- alias: "Notify when washing machine enters spin cycle, almost done"
+  trigger:
+    platform: state
+    entity_id: sensor.washing_machine_status
+    to: 'Spin Cycle'
+  action:
+    - service: notify.telegram
+      data:
+        message: "Washing machine is in the spin cycle, almost done!"
+
+- alias: "Desk up"
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.desk_watts
+    above: 100
+  action:
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.desk_up
+
+- alias: "Desk down"
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.desk_watts
+    above: 10
+    below: 100
+  action:
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.desk_up
