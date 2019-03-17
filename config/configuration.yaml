@@ -94,6 +94,10 @@ device_tracker:
     verify_ssl: false
     new_device_defaults:
       track_new_devices: false
+  - platform: mqtt
+    devices:
+      clayton_phone_first_floor: "monitor/first-floor/claytons_phone/device_tracker"
+      mary_phone_first_floor: "monitor/first-floor/marys_phone/device_tracker"
 
 person:
 
@@ -106,6 +110,11 @@ homekit:
       - switch.washing_machine_107
       - switch.sump_pump_20
       - switch.washlet_77
+
+mqtt:
+  broker: mosquitto
+  username: hass
+  password: !secret mqtt_password
 
 http:
   base_url: https://hass.k.oneill.net

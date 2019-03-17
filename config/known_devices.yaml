@@ -30,6 +30,11 @@ claytons_watch:
   picture:
   track: true
 
+clayton_phone_first_floor:
+  hide_if_away: false
+  name: "Clayton's phone first floor"
+  track: true
+
 pauls_phone:
   hide_if_away: false
   icon:
@@ -44,4 +49,9 @@ marys_phone:
   mac: C0:A5:3E:27:33:08
   name: "Mary's Phone"
   picture:
+  track: true
+
+mary_phone_first_floor:
+  hide_if_away: false
+  name: "Mary's phone first floor"
   track: true
