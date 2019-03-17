@@ -101,6 +101,9 @@ device_tracker:
 
 person:
 
+logger:
+  default: info
+
 homekit:
   filter:
     exclude_entities:
