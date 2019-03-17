@@ -22,6 +22,8 @@ frontend:
 # Enables configuration UI
 config:
 
+ios:
+
 recorder:
   db_url: !env_var DB_URL
 
