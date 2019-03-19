@@ -55,3 +55,8 @@ mary_phone_first_floor:
   hide_if_away: false
   name: "Mary's phone first floor"
   track: true
+
+paul_phone_first_floor:
+  hide_if_away: false
+  name: "Paul's phone first floor"
+  track: true

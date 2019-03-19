@@ -98,6 +98,7 @@ device_tracker:
     devices:
       clayton_phone_first_floor: "monitor/first-floor/claytons_phone/device_tracker"
       mary_phone_first_floor: "monitor/first-floor/marys_phone/device_tracker"
+      paul_phone_first_floor: "monitor/first-floor/pauls_phone/device_tracker"
 
 person:
 
