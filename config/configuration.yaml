@@ -43,6 +43,12 @@ notify:
    platform: telegram
    chat_id: "-396790894"
 
+netatmo:
+  username: clayton@oneill.net
+  password: !secret netatmo_password
+  api_key: !secret netatmo_api_key
+  secret_key: !secret netatmo_secret_key
+
 vera:
   vera_controller_url: http://172.19.74.180:3480
   exclude:
