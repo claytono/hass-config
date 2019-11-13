@@ -13,8 +13,26 @@
     - service: vacuum.turn_on
       entity_id: vacuum.lord_derpington
 
+- alias: "Turn off light after running vacuum at night"
+  trigger:
+    platform: state
+    entity_id: vacuum.lord_derpington
+    to: 'off'
+#  conditions:
+#    condition: time
+#    after: '01:00:00'
+#    before: '05:59:00'
+  action:
+    # Set the light to max brightness (normal) before turning it off.
+    - service: light.turn_on
+      entity_id: light.dining_room_light_108
+      data:
+        brightness_pct: 100
+    - service: light.turn_off
+      entity_id: light.dining_room_light_108
+
 - alias: "Notify when washing machine is done"
-  hide_entity: true
+  hide_entity: false
   trigger:
     platform: state
     entity_id: sensor.washing_machine_status
@@ -25,7 +43,7 @@
         message: "Washing machine is done!"
 
 - alias: "Notify when washing machine enters spin cycle, almost done"
-  hide_entity: true
+  hide_entity: false
   trigger:
     platform: state
     entity_id: sensor.washing_machine_status
