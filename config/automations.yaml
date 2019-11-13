@@ -55,3 +55,35 @@
   action:
     - service: input_boolean.turn_off
       entity_id: input_boolean.desk_up
+
+- alias: "Office Humidistat - On"
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.awair_humidity
+    below: 30
+    for:
+      minutes: 5
+  condition:
+    condition: state
+    entity_id:  light.office_floor_lamp_19
+    state: "on"
+  action:
+   - service: switch.turn_on
+     data:
+       entity_id: switch.humidifier_101
+
+- alias: "Office Humidistat - Off"
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.awair_humidity
+    above: 45
+    for:
+      minutes: 5
+  condition:
+    condition: state
+    entity_id:  light.office_floor_lamp_19
+    state: "on"
+  action:
+   - service: switch.turn_off
+     data:
+       entity_id: switch.humidifier_101
