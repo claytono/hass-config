@@ -93,13 +93,6 @@ sensor doorbell:
  platform: ring
 
 device_tracker:
-  - platform: unifi
-    host: unifi-cloudkey
-    username: hass
-    password: !secret unifi_password
-    verify_ssl: false
-    new_device_defaults:
-      track_new_devices: false
   - platform: mqtt
     devices:
       clayton_phone_first_floor: "monitor/first-floor/claytons_phone/device_tracker"
