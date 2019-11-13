@@ -106,13 +106,25 @@ logger:
 
 homekit:
   filter:
-    exclude_entities:
-      - switch.luser_36
-      - switch.k2_98
-      - switch.k3_99
-      - switch.washing_machine_107
-      - switch.sump_pump_20
-      - switch.washlet_77
+    include_entities:
+    - light.bathroom_light_106
+    - light.dining_room_light_108
+    - light.family_room_standing_lamp_44
+    - light.front_left_light_basement_42
+    - light.garage_overhead_lights_8
+    - light.office_floor_lamp_19
+    - light.office_light_76
+    - light.right_rear_lamp_basement_41
+    - lock.front_door_lock_10
+    - lock.garage_door_lock_88
+    - lock.left_garage_door_70
+    - lock.right_garage_door_72
+    - sensor.garage_humidity
+    - sensor.garage_temperature
+    - sensor.netatmo_indoor_humidity
+    - sensor.netatmo_indoor_temperature
+    - sensor.netatmo_outdoor_humidity
+    - sensor.netatmo_outdoor_temperature
 
 mqtt:
   broker: mosquitto
