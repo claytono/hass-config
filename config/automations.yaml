@@ -78,13 +78,9 @@
   trigger:
     platform: numeric_state
     entity_id: sensor.awair_humidity
-    below: 30
+    below: 40
     for:
       minutes: 5
-  condition:
-    condition: state
-    entity_id:  light.office_floor_lamp_19
-    state: "on"
   action:
    - service: switch.turn_on
      data:
@@ -96,11 +92,7 @@
     entity_id: sensor.awair_humidity
     above: 45
     for:
-      minutes: 5
-  condition:
-    condition: state
-    entity_id:  light.office_floor_lamp_19
-    state: "on"
+      minutes: 1
   action:
    - service: switch.turn_off
      data:
