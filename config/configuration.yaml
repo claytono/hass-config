@@ -74,13 +74,6 @@ vera:
     - 19 # Office Floor Lamp
     - 106 # Main floor bathroom light
 
-vacuum:
-  - platform: roomba
-    host: Roomba-3143C91082324790.oneill.net
-    username: 3143C91082324790
-    password: !secret roomba_password
-    name: "Lord Derpington"
-
 ring:
   username: !secret ring_username
   password: !secret ring_password
