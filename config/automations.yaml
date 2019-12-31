@@ -97,3 +97,27 @@
    - service: switch.turn_off
      data:
        entity_id: switch.humidifier_101
+
+- alias: "Main Floor Humidistat - On"
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.living_room_humidity
+    below: 40
+    for:
+      minutes: 5
+  action:
+   - service: switch.turn_on
+     data:
+       entity_id: switch.humidifier_lw45_154
+
+- alias: "Main Floor Humidistat - Off"
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.living_room_humidity
+    above: 45
+    for:
+      minutes: 1
+  action:
+   - service: switch.turn_off
+     data:
+       entity_id: switch.humidifier_lw45_154
