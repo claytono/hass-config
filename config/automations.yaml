@@ -77,7 +77,7 @@
 - alias: "Office Humidistat - On"
   trigger:
     platform: numeric_state
-    entity_id: sensor.awair_humidity
+    entity_id: sensor.office_humidity_bme280
     below: 40
     for:
       minutes: 5
@@ -89,7 +89,7 @@
 - alias: "Office Humidistat - Off"
   trigger:
     platform: numeric_state
-    entity_id: sensor.awair_humidity
+    entity_id: sensor.office_humidity_bme280
     above: 45
     for:
       minutes: 1
