@@ -85,14 +85,8 @@ ring:
   username: !secret ring_username
   password: !secret ring_password
 
-binary_sensor doorbell:
-  platform: ring
-
-camera doorbell:
-  platform: ring
-
-sensor doorbell:
- platform: ring
+camera:
+  - platform: ring
 
 device_tracker:
   - platform: mqtt
@@ -214,6 +208,7 @@ binary_sensor:
   - platform: ping
     name: laptop-ethernet
     host: hajnal-ethernet.oneill.net
+  - platform: ring
 
 # Text to speech
 tts:
