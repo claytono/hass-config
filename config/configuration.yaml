@@ -163,6 +163,16 @@ map:
 # Track the sun
 sun:
 
+climate:
+  - platform: generic_thermostat
+    name: Office Thermostat
+    heater: switch.office_heater_37
+    target_sensor: sensor.office_temperature_bme280
+    precision: 0.1
+    min_temp: 60
+    max_temp: 85
+    hot_tolerance: 0
+
 switch:
 - platform: template
   switches:
