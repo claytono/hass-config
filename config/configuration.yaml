@@ -81,13 +81,6 @@ vera:
     - 19 # Office Floor Lamp
     - 106 # Main floor bathroom light
 
-ring:
-  username: !secret ring_username
-  password: !secret ring_password
-
-camera:
-  - platform: ring
-
 device_tracker:
   - platform: mqtt
     devices:
@@ -279,7 +272,6 @@ binary_sensor:
   - platform: ping
     name: laptop-ethernet
     host: hajnal-ethernet.oneill.net
-  - platform: ring
 
 # Text to speech
 tts:
