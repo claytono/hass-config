@@ -1,5 +1,4 @@
 maeves_phone:
-  hide_if_away: false
   icon:
   mac: 30:D9:D9:33:85:81
   name: "Maeve's Phone"
@@ -7,7 +6,6 @@ maeves_phone:
   track: true
 
 zoes_phone:
-  hide_if_away: false
   icon:
   mac: A4:B8:05:BB:B0:5B
   name: "Zoe's Phone"
@@ -15,7 +13,6 @@ zoes_phone:
   track: true
 
 claytons_phone:
-  hide_if_away: false
   icon:
   mac: F0:99:B6:53:06:A1
   name: "Clayton's Phone"
@@ -23,7 +20,6 @@ claytons_phone:
   track: true
 
 claytons_watch:
-  hide_if_away: false
   icon:
   mac: 68:FE:F7:42:6E:93
   name: "Clayton's Watch"
@@ -31,12 +27,10 @@ claytons_watch:
   track: true
 
 clayton_phone_first_floor:
-  hide_if_away: false
   name: "Clayton's phone first floor"
   track: true
 
 pauls_phone:
-  hide_if_away: false
   icon:
   mac: 38:53:9c:94:de:7b
   name: "Paul's Phone"
@@ -44,7 +38,6 @@ pauls_phone:
   track: true
 
 marys_phone:
-  hide_if_away: false
   icon:
   mac: C0:A5:3E:27:33:08
   name: "Mary's Phone"
@@ -52,11 +45,9 @@ marys_phone:
   track: true
 
 mary_phone_first_floor:
-  hide_if_away: false
   name: "Mary's phone first floor"
   track: true
 
 paul_phone_first_floor:
-  hide_if_away: false
   name: "Paul's phone first floor"
   track: true
