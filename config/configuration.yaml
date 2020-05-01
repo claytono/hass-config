@@ -41,15 +41,22 @@ telegram_bot:
      - "-396790894"
 
 notify:
- - name: "telegram"
-   platform: telegram
-   chat_id: "-396790894"
+- name: "telegram"
+  platform: telegram
+  chat_id: "-396790894"
+- name: "opsgenie"
+  platform: smtp
+  sender: clayton@oneill.net
+  recipient: email1@fnord.opsgenie.net
+  server: smtp.gmail.com
+  username: clayton.oneill@gmail.com
+  password: !secret gmail_smtp_password
 
-netatmo:
-  username: clayton@oneill.net
-  password: !secret netatmo_password
-  api_key: !secret netatmo_api_key
-  secret_key: !secret netatmo_secret_key
+#netatmo:
+#  username: clayton@oneill.net
+#  password: !secret netatmo_password
+#  api_key: !secret netatmo_api_key
+#  secret_key: !secret netatmo_secret_key
 
 vera:
   vera_controller_url: http://172.19.74.180:3480
