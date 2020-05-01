@@ -280,6 +280,6 @@ tts:
 input_boolean: !include input_boolean.yaml
 #input_select: !include input_select.yaml
 
-group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
+scene: !include scenes.yaml
