@@ -96,3 +96,16 @@
    - service: switch.turn_off
      data:
        entity_id: switch.humidifier_lw45_154
+
+- alias: "Turn on basement lights with projector"
+  trigger:
+    platform: state
+    entity_id: switch.projector
+    from: "off"
+    to: "on"
+  action:
+  - service: light.turn_on
+    data:
+      entity_id:
+      - light.front_left_light_basement_42
+      - light.right_rear_lamp_basement_41
