@@ -253,6 +253,14 @@ sensor:
         value_template: >-
           {{ state_attr('switch.humidifier_101', 'current_power_w') | default(0) }}
         unit_of_measurement: "W"
+      sump_watts:
+        value_template: >-
+          {{ state_attr('switch.sump_pump_20', 'current_power_w') | default(0) }}
+        unit_of_measurement: "W"
+      dehumidifier_watts:
+        value_template: >-
+          {{ state_attr('switch.dehumidifier_110', 'current_power_w') | default(0) }}
+        unit_of_measurement: "W"
   - platform: template
     sensors:
       battery_front_door_lock:
