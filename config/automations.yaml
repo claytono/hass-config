@@ -18,18 +18,6 @@
       data:
         message: "Washing machine is in the spin cycle, almost done!"
 
-- alias: "Alarm when water detected in basement"
-  trigger:
-    platform: state
-    entity_id: binary_sensor.water_sensor_157
-    to: "on"
-    for:
-      minutes: 1
-  action:
-    - service: notify.opsgenie
-      data:
-        message: "Water detected in basement"
-
 - alias: "Desk up"
   trigger:
     platform: numeric_state

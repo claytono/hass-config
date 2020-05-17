@@ -301,6 +301,28 @@ binary_sensor:
   - platform: ping
     name: laptop-ethernet
     host: hajnal-ethernet.oneill.net
+  - platform: template
+    sensors:
+      freezer_too_warm:
+        device_class: problem
+        value_template: '{{ states("sensor.freezer_temperature") | float > 10 }}'
+
+alert:
+  basement_water:
+    name: "Water is detected in the basement!"
+    entity_id: binary_sensor.water_sensor_157
+    state: "on"
+    repeat: 10
+    notifiers:
+    - call_me
+  freezer_too_warm:
+    name: "Temperature in the freezer is too warm!"
+    entity_id: binary_sensor.freezer_too_warm
+    state: "on"
+    repeat: 10
+    notifiers:
+    - call_me
+
 
 # Text to speech
 tts:
