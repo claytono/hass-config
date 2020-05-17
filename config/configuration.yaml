@@ -51,12 +51,9 @@ notify:
   server: smtp.gmail.com
   username: clayton.oneill@gmail.com
   password: !secret gmail_smtp_password
-
-#netatmo:
-#  username: clayton@oneill.net
-#  password: !secret netatmo_password
-#  api_key: !secret netatmo_api_key
-#  secret_key: !secret netatmo_secret_key
+netatmo:
+  client_id: !secret netatmo_client_id
+  client_secret: !secret netatmo_client_secret
 
 vera:
   vera_controller_url: http://172.19.74.180:3480
