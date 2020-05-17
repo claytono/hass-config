@@ -40,6 +40,10 @@ telegram_bot:
     allowed_chat_ids:
      - "-396790894"
 
+twilio:
+  account_sid: !secret twilio_account_sid
+  auth_token: !secret twilio_auth_token
+
 notify:
 - name: "telegram"
   platform: telegram
@@ -51,6 +55,16 @@ notify:
   server: smtp.gmail.com
   username: clayton.oneill@gmail.com
   password: !secret gmail_smtp_password
+- name: "twilio_call"
+  platform: twilio_call
+  from_number: !secret twilio_number
+- name: "call_me"
+  platform: group
+  services:
+  - service: twilio_call
+    data:
+      target: !secret my_phone
+
 netatmo:
   client_id: !secret netatmo_client_id
   client_secret: !secret netatmo_client_secret
