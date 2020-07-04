@@ -1,23 +1,5 @@
 default_config:
 
-homeassistant:
-  # Name of the location where Home Assistant is running
-  name: Home
-  # Location required to calculate the time the sun rises and sets
-  latitude: !secret latitude
-  longitude: !secret longitude
-  # Impacts weather/sunrise data (altitude above sea level in meters)
-  elevation: 103
-  # metric for Metric, imperial for Imperial
-  unit_system: imperial
-  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-  time_zone: America/New_York
-  # Customization file
-  customize: !include customize.yaml
-
-# Show links to resources in log and frontend
-# introduction:
-
 # Enables the frontend
 frontend:
 
@@ -144,9 +126,6 @@ mqtt:
   broker: mosquitto
   username: hass
   password: !secret mqtt_password
-
-http:
-  base_url: https://hass.k.oneill.net
 
 # Checks for available updates
 # Note: This component will send some information about your system to
