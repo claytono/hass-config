@@ -318,7 +318,7 @@ binary_sensor:
     sensors:
       freezer_too_warm:
         device_class: problem
-        value_template: '{{ states("sensor.freezer_temperature") | float > 10 }}'
+        value_template: '{{ states("sensor.freezer_temperature") | float > 15 }}'
 
 alert:
   basement_water:
