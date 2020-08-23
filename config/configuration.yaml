@@ -56,7 +56,6 @@ vera:
   exclude:
     # Office
     - 40 # office remote, dead battery, but might use one day, so not unpaired.
-    - 58 # office 4 in 1 parent device
     - 66 # Motion sensor
     - 67 # Motion sensor 1
     - 68 # Motion sensor 2

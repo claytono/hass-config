@@ -77,3 +77,21 @@
       entity_id:
       - light.front_left_light_basement_42
       - light.right_rear_lamp_basement_41
+
+- alias: "Turn on office closet lamp on motion"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.office_4_in_1_sensor_58
+    to: "on"
+  action:
+    service: switch.turn_on
+    entity_id: switch.office_closet_relay
+
+- alias: "Turn off office closet lamp on no motion"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.office_4_in_1_sensor_58
+    to: "off"
+  action:
+    service: switch.turn_off
+    entity_id: switch.office_closet_relay
