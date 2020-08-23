@@ -61,13 +61,6 @@ vera:
     - 68 # Motion sensor 2
     - 74 # Fake smoke sensor
     - 75 # Motion sensor 3
-    # Garage
-    - 31 # GC100
-    - 34 # GC100 relay
-    - 32 # Left garage door relay
-    - 33 # Right garage door relay
-    - 89 # Right garage door sensor
-    - 90 # Left garage door sensor
   lights:
     - 8  # Garage overhead lights
     - 19 # Office Floor Lamp
@@ -88,6 +81,8 @@ logger:
 homekit:
   filter:
     include_entities: &entity_whitelist
+    - cover.left_garage_door
+    - cover.right_garage_door
     - light.bathroom_light_106
     - light.dining_room_light_108
     - light.family_room_standing_lamp_44
@@ -98,8 +93,6 @@ homekit:
     - light.right_rear_lamp_basement_41
     - lock.front_door_lock_10
     - lock.garage_door_lock_88
-    - lock.left_garage_door_70
-    - lock.right_garage_door_72
     - sensor.garage_humidity
     - sensor.garage_temperature
     - sensor.netatmo_indoor_humidity
@@ -161,6 +154,18 @@ climate:
     min_temp: 60
     max_temp: 85
     hot_tolerance: 0
+
+cover:
+  platform: opengarage
+  covers:
+    left_door:
+      host: og-left-door.oneill.net
+      device_key: !secret opengarage_device_key
+      name: "Left Garage Door"
+    right_door:
+      host: og-right-door.oneill.net
+      device_key: !secret opengarage_device_key
+      name: "Right Garage Door"
 
 switch:
 - platform: template
