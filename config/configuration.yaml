@@ -99,6 +99,8 @@ homekit:
     - sensor.netatmo_indoor_temperature
     - sensor.netatmo_outdoor_humidity
     - sensor.netatmo_outdoor_temperature
+    - switch.smoker_158
+
     # Harmony
     - switch.projector
     - switch.appletv
@@ -266,6 +268,9 @@ sensor:
       dehumidifier_watts:
         value_template: >-
           {{ state_attr('switch.dehumidifier_110', 'current_power_w') | default(0) }}
+        unit_of_measurement: "W"
+      smoker_watts:
+        value_template: '{{ states.switch.smoker_158.attributes.current_power_w }}'
         unit_of_measurement: "W"
   - platform: template
     sensors:
