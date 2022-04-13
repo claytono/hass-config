@@ -1,5 +1,8 @@
 default_config:
 
+homeassistant:
+  customize: !include customize.yaml
+
 # Enables the frontend
 frontend:
 

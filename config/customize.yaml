@@ -1,8 +1,0 @@
----
-# Hide vera "armed" switches
-switch.garage_door_lock_88:
-  hidden: true
-switch.front_door_sensor_104:
-  hidden: true
-switch.front_door_lock_10:
-  hidden: true
