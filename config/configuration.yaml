@@ -338,6 +338,29 @@ sensor:
         friendly_name: "Front Door Lock Battery"
         value_template: '{{ states.lock.front_door_lock_10.attributes.battery_level }}'
         unit_of_measurement: "%"
+  - platform: template
+    # Airvisual sensors
+    sensors:
+      airvisual_co2:
+        friendly_name: "Airvisual CO2"
+        value_template: "{{  state_attr('air_quality.office_node_pro_air_quality', 'carbon_dioxide') | default(0) }}"
+        unit_of_measurement: "ppm"
+      airvisual_pm01:
+        friendly_name: "Airvisual PM0.1"
+        value_template: "{{  state_attr('air_quality.office_node_pro_air_quality', 'particulate_matter_0_1') | default(0) }}"
+        unit_of_measurement: "ug/m3"
+      airvisual_pm25:
+        friendly_name: "Airvisual PM2.5"
+        value_template: "{{  state_attr('air_quality.office_node_pro_air_quality', 'particulate_matter_2_5') | default(0) }}"
+        unit_of_measurement: "ug/m3"
+      airvisual_pm10:
+        friendly_name: "Airvisual PM10"
+        value_template: "{{  state_attr('air_quality.office_node_pro_air_quality', 'particulate_matter_10') | default(0) }}"
+        unit_of_measurement: "ug/m3"
+      airvisual_pm25_sensor_life:
+        friendly_name: "Airvisual PM2.5 Sensor Life"
+        value_template: "{{  state_attr('air_quality.office_node_pro_air_quality', 'pm2_5_sensor_life') | default(0) }}"
+        unit_of_measurement: "ug/m3"
 
 binary_sensor:
   # This monitors if my laptop is docked at my desk, which is a good proxy for
