@@ -100,6 +100,8 @@ homekit:
     - sensor.netatmo_outdoor_humidity
     - sensor.netatmo_outdoor_temperature
     - switch.smoker_158
+    - binary_sensor.family_room_humidifier_empty
+    - binary_sensor.dining_room_humidifier_empty
 
     # Harmony
     - switch.projector
@@ -156,6 +158,12 @@ climate:
     min_temp: 60
     max_temp: 85
     hot_tolerance: 0
+
+generic_hygrostat:
+  - name: "Main Floor"
+    humidifier: switch.main_floor_humidifiers
+    target_sensor: sensor.living_room_humidity
+    target_humidity: 40
 
 cover:
   platform: opengarage
@@ -232,6 +240,20 @@ switch:
         service: remote.turn_off
         data:
           entity_id: remote.harmony_hub
+
+    main_floor_humidifiers:
+      friendly_name: "Main Floor Humidifiers"
+      value_template: "{{ is_state('switch.dining_room_humidifier', 'on') }}"
+      turn_on:
+        - service: switch.turn_on
+          entity_id: switch.dining_room_humidifier
+        - service: switch.turn_on
+          entity_id: switch.family_room_humidifier_relay
+      turn_off:
+        - service: switch.turn_off
+          entity_id: switch.dining_room_humidifier
+        - service: switch.turn_off
+          entity_id: switch.family_room_humidifier_relay
 
 # Sensors
 sensor:
