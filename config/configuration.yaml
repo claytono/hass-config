@@ -297,8 +297,6 @@ switch:
 
 # Sensors
 sensor:
-  - platform: awair
-    access_token: !secret awair_token
   - platform: template
     sensors:
       luser_watts:
