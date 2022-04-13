@@ -110,11 +110,10 @@ homekit:
     - light.bathroom_light_106
     - light.dining_room_light_108
     - light.family_room_standing_lamp_44
-    - light.front_left_light_basement_42
     - light.garage_overhead_lights_8
     - light.office_floor_lamp_19
     - light.office_light_76
-    - light.right_rear_lamp_basement_41
+    - light.office_sink_light
     - lock.front_door_lock_10
     - lock.garage_door_lock_88
     - sensor.garage_humidity
@@ -216,6 +215,21 @@ cover:
       host: og-right-door.oneill.net
       device_key: !secret opengarage_device_key
       name: "Right Garage Door"
+
+light:
+- platform: switch
+  name: Office Sink Light
+  entity_id: switch.office_sink
+- platform: switch
+  name: Office Closet Light
+  entity_id: switch.office_closet_relay
+- platform: group
+  name: Office lights
+  entities:
+    - light.office_floor_lamp
+    - light.basement_office_main_lights
+    - light.office_sink_light
+    - light.office_closet_light
 
 switch:
 - platform: template
