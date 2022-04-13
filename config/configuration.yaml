@@ -192,7 +192,7 @@ sun:
 climate:
   - platform: generic_thermostat
     name: Office Thermostat
-    heater: switch.office_heater_37
+    heater: switch.office_heater
     target_sensor: sensor.office_temperature_bme280
     precision: 0.1
     min_temp: 60
@@ -310,16 +310,6 @@ sensor:
       k3_watts:
         value_template: >-
           {{ state_attr('switch.k3_99', 'current_power_w') | default(0) }}
-        unit_of_measurement: "W"
-      office_heater_watts:
-        friendly_name: "Office Heater"
-        value_template: >-
-          {{ state_attr('switch.office_heater_37', 'current_power_w') | default(0) }}
-        unit_of_measurement: "W"
-      office_humidifier_watts:
-        friendly_name: "Office Humidifier"
-        value_template: >-
-          {{ state_attr('switch.humidifier_101', 'current_power_w') | default(0) }}
         unit_of_measurement: "W"
       sump_watts:
         value_template: >-
