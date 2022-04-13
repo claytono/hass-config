@@ -372,16 +372,66 @@ binary_sensor:
   - platform: ping
     name: laptop-ethernet
     host: hajnal-ethernet.oneill.net
+  - platform: workday
+    country: US
   - platform: template
     sensors:
       freezer_too_warm:
         device_class: problem
-        value_template: '{{ states("sensor.freezer_temperature") | float > 15 }}'
+        delay_on: "00:20:00"
+        value_template: >
+          {{ states("sensor.freezer_temperature") | float(999.0) == 999.0
+             or states("sensor.freezer_temperature") | float > 20 }}'
+
+      main_floor_humidity_low:
+        value_template: >
+          {{ state_attr('sensor.main_floor_humidifier', 'humidity') | float(999.0) >
+               states('sensor.living_room_humidity') | float(0.0)
+          }}
+      family_room_humidifier_empty:
+        friendly_name: "Family Room Humidifier Empty"
+        device_class: problem
+        value_template: >
+          {{ states("main_floor_humidity_low")
+               and states("switch.family_room_humidifier_relay")
+               and states("sensor.family_room_humidifier_power") |float(0.0) < 1.0
+          }}
+
+      dining_room_humidifier_empty:
+        friendly_name: "Dining Room Humidifier Empty"
+        device_class: problem
+        value_template: >
+          {{ states("main_floor_humidity_low")
+               and states("switch.dining_room_humidifier")
+               and states("sensor.dining_room_humidifier_electric_consumption_w") |float(0.0) < 1.0
+          }}
+
 
 alert:
-  basement_water:
-    name: "Water is detected in the basement!"
+  basement_sump_water:
+    name: "Water is detected in the basement near the sump!"
     entity_id: binary_sensor.water_sensor_157
+    state: "on"
+    repeat: 10
+    notifiers:
+    - call_me
+  basement_back_door_water:
+    name: "Water is detected in the basement near the back door!"
+    entity_id: binary_sensor.basement_door_water_159
+    state: "on"
+    repeat: 10
+    notifiers:
+    - call_me
+  computer_room_water:
+    name: "Water is detected in the computer room!"
+    entity_id: binary_sensor.computer_room_water_sensor_water_alarm_water_leak_detected
+    state: "on"
+    repeat: 10
+    notifiers:
+    - call_me
+  storage_room_water:
+    name: "Water is detected in the storage room!"
+    entity_id: binary_sensor.storage_water_sensor_170
     state: "on"
     repeat: 10
     notifiers:
@@ -394,6 +444,14 @@ alert:
     notifiers:
     - call_me
 
+  freezer_sensor_offline:
+    name: "Freezer sensor is offline"
+    entity_id: binary_sensor.freezer_sensor_status
+    state: "off"
+    repeat: 10
+    skip_first: true
+    notifiers:
+    - call_me
 
 # Text to speech
 tts:
