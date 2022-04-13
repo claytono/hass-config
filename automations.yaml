@@ -17,10 +17,10 @@
     - service: input_boolean.turn_off
       entity_id: input_boolean.desk_up
 
-- alias: "Turn on basement lights with projector"
+- alias: "Turn on basement lights with TV"
   trigger:
     platform: state
-    entity_id: switch.projector
+    entity_id: switch.basement_tv
     from: "off"
     to: "on"
   action:
