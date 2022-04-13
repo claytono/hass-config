@@ -22,14 +22,16 @@ StringIO.open do |f|
     data:
     EOS
 
-  Dir.glob("#{CONFIG_DIR}/*.yaml").sort.each do |file|
-    name = file.sub(CONFIG_DIR + '/', '')
-    sha1.update(name)
-    f.puts "  #{name}: |-"
+  ["*.yaml", "caseta*"].each do |pattern|
+    Dir.glob("#{CONFIG_DIR}/#{pattern}").sort.each do |file|
+      name = file.sub(CONFIG_DIR + '/', '')
+      sha1.update(name)
+      f.puts "  #{name}: |-"
 
-    data = File.read(file)
-    sha1.update(data)
-    f.puts data.gsub(/^/, "    ")
+      data = File.read(file)
+      sha1.update(data)
+      f.puts data.gsub(/^/, "    ")
+    end
   end
 
   puts "Hash: #{sha1.hexdigest}"

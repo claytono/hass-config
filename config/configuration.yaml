@@ -60,6 +60,12 @@ netatmo:
   client_id: !secret netatmo_client_id
   client_secret: !secret netatmo_client_secret
 
+lutron_caseta:
+  - host: lutron-032e18fd.oneill.net
+    keyfile: caseta.key
+    certfile: caseta.crt
+    ca_certs: caseta-bridge.crt
+
 vera:
   vera_controller_url: http://172.19.74.180:3480
   exclude:
@@ -111,6 +117,22 @@ homekit:
     - switch.smoker_158
     - binary_sensor.family_room_humidifier_empty
     - binary_sensor.dining_room_humidifier_empty
+
+    # Caseta items
+    - light.basement_office_main_lights
+    - switch.basement_stairs_main_lights
+    - switch.exterior_basement_stairs_light
+    - switch.guest_bathroom_exhaust_fan
+    - light.guest_bathroom_vanity_lights
+    - light.guest_bedroom_main_lights
+    - light.rec_room_main_lights
+    - fan.master_bedroom_ceiling_fan
+    - light.master_bedroom_ceiling_fan_light
+    - light.rec_room_floor_lamp
+    - light.office_floor_lamp
+    - binary_sensor.office_occupancy
+    - light.rec_room_back_right_floor_lamp
+    - light.rec_room_front_left_floor_lamp
 
     # Harmony
     - switch.basement_tv
