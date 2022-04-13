@@ -49,10 +49,19 @@ notify:
 - name: "twilio_call"
   platform: twilio_call
   from_number: !secret twilio_number
+- name: "twilio_sms"
+  platform: twilio_sms
+  from_number: !secret twilio_number
 - name: "call_me"
   platform: group
   services:
   - service: twilio_call
+    data:
+      target: !secret my_phone
+- name: "text_me"
+  platform: group
+  services:
+  - service: twilio_sms
     data:
       target: !secret my_phone
 
