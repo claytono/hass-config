@@ -192,7 +192,7 @@ climate:
   - platform: generic_thermostat
     name: Office Thermostat
     heater: switch.office_heater
-    target_sensor: sensor.office_temperature_bme280
+    target_sensor: sensor.office_bme280_temperature
     precision: 0.1
     min_temp: 60
     max_temp: 85
