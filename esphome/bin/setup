@@ -1,0 +1,10 @@
+#!/bin/bash -xv
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}/" )/.." && pwd )"
+
+cd $BASEDIR
+rm -rf venv
+
+python3 -m venv "${BASEDIR}/venv"
+venv/bin/pip install esphome
+
