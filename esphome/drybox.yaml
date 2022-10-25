@@ -1,7 +1,7 @@
 substitutions:
-  devicename: garage-bme280
-  device_id: garage_bme280
-  human_devicename: Garage BME280
+  devicename: drybox-bme280
+  device_id: drybox_bme280
+  human_devicename: Drybox BME280
   icon: mdi:coolant-temperature
 
 packages:
