@@ -1,0 +1,21 @@
+esphome:
+  name: "${devicename}"
+  platform: ESP8266
+  board: d1_mini
+
+# Enable logging
+logger:
+
+spi:
+  miso_pin: D6
+  clk_pin: D5
+
+sensor:
+  - platform: max6675
+    id: max6675_1
+    name: "${human_devicename} Temperature"
+    cs_pin: D8
+    update_interval: 15s
+  - platform: copy
+    source_id: max6675_1
+    name: "${human_devicename} Temperature 2"
