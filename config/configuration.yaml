@@ -199,6 +199,16 @@ climate:
     max_temp: 85
     hot_tolerance: 0
 
+  - platform: generic_thermostat
+    name: Office Foot Warmer
+    heater: switch.office_foot_warmer_switch
+    target_sensor: sensor.office_foot_warmer_temperature
+    precision: 0.1
+    min_temp: 60
+    max_temp: 130
+    hot_tolerance: 0
+
+
 generic_hygrostat:
   - name: "Main Floor"
     humidifier: switch.main_floor_humidifiers
