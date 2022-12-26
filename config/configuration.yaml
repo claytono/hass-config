@@ -134,6 +134,7 @@ homekit:
     - switch.guest_bathroom_exhaust_fan
     - light.guest_bathroom_vanity_lights
     - light.guest_bedroom_main_lights
+    - light.guest_bedroom_floor_lamp
     - light.rec_room_main_lights
     - fan.master_bedroom_ceiling_fan
     - light.master_bedroom_ceiling_fan_light
