@@ -91,13 +91,6 @@ vera:
     - 19 # Office Floor Lamp
     - 106 # Main floor bathroom light
 
-device_tracker:
-  - platform: mqtt
-    devices:
-      clayton_phone_first_floor: "monitor/first-floor/claytons_phone/device_tracker"
-      mary_phone_first_floor: "monitor/first-floor/marys_phone/device_tracker"
-      paul_phone_first_floor: "monitor/first-floor/pauls_phone/device_tracker"
-
 person:
 
 logger:
@@ -156,21 +149,6 @@ cloud:
   alexa:
     filter:
       include_entities: *entity_whitelist
-
-
-mqtt:
-  broker: mosquitto
-  username: hass
-  password: !secret mqtt_password
-
-# Checks for available updates
-# Note: This component will send some information about your system to
-# the developers to assist with development of Home Assistant.
-# For more information, please see:
-# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
-updater:
-  # Optional, allows Home Assistant developers to focus on popular components.
-  # include_used_components: true
 
 # Discover some devices automatically
 discovery:
@@ -472,6 +450,3 @@ tts:
 input_boolean: !include input_boolean.yaml
 #input_select: !include input_select.yaml
 
-automation: !include automations.yaml
-script: !include scripts.yaml
-scene: !include scenes.yaml
