@@ -7,6 +7,7 @@ esphome:
 logger:
 
 i2c:
+  scan: false
 
 sensor:
   - platform: bme280

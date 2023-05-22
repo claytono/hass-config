@@ -1,3 +1,6 @@
+substitutions:
+  restore_mode: always_off
+
 esphome:
   name: ${devicename}
   platform: ESP8266
@@ -63,6 +66,7 @@ switch:
     pin: GPIO12
     id: relay
     icon: ${icon}
+    restore_mode: ${restore_mode}
 
 # Treat the Blue LED like any other light
 output:
