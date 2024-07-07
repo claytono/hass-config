@@ -1,0 +1,46 @@
+substitutions:
+  devicename: bedjet
+  device_id: bedjet
+  human_devicename: "Bed Jet"
+  icon: mdi:bed
+
+packages:
+  lolin_d32_pro: !include common/device-classes/lolin_d32_pro.yaml
+  wifi: !include common/wifi.yaml
+  base: !include common/base.yaml
+  debug: !include common/debug.yaml
+
+ota:
+  - platform: esphome
+    id: !extend ota_esphome
+    on_begin:
+      then:
+        - logger.log: "Disconnecting clients for OTA update..."
+        - switch.turn_off: bedjet_1_ble_switch
+
+esp32_ble_tracker:
+
+#text_sensor:
+#  - platform: ble_scanner
+#    name: "BLE Devices Scanner"
+
+ble_client:
+  - mac_address: 08:D1:F9:0A:B9:0A
+    id: bedjet_ble_id1
+
+switch:
+  - platform: ble_client
+    ble_client_id: bedjet_ble_id1
+    name: "BedJet BLE Switch"
+    id: bedjet_1_ble_switch
+
+bedjet:
+  - id: bedjet_1
+    ble_client_id: bedjet_ble_id1
+    time_id: homeassistant_time
+
+climate:
+  - platform: bedjet
+    id: bedjet_climate_entity
+    name: "${human_devicename} Climate"
+    bedjet_id: bedjet_1

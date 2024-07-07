@@ -1,10 +1,3 @@
-# Turn on the web server
-web_server:
-  ota: false
-  auth:
-    username: !secret web_username
-    password: !secret web_password
-
 text_sensor:
   - platform: version
     name: "${human_devicename} ESPHome Version"
@@ -15,7 +8,9 @@ api:
     key: !secret encryption_key
 
 ota:
-  password: !secret ota
+  - platform: esphome
+    id: ota_esphome
+    password: !secret ota
 
 time:
   - platform: homeassistant

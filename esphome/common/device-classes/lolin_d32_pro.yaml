@@ -1,0 +1,11 @@
+esphome:
+  name: "${devicename}"
+
+esp32:
+  board: lolin_d32_pro
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+logger:
