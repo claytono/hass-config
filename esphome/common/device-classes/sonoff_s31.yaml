@@ -1,5 +1,6 @@
 substitutions:
   restore_mode: always_off
+  update_interval: 60s
 
 esphome:
   name: ${devicename}
@@ -40,19 +41,24 @@ binary_sensor:
 
 sensor:
   - platform: cse7766
-    update_interval: 20s
     current:
       name: "${human_devicename} Current"
       id: "${device_id}_current"
       accuracy_decimals: 2
+      filters:
+        - throttle_average: ${update_interval}
     voltage:
       name: "${human_devicename} Voltage"
       id: "${device_id}_voltage"
       accuracy_decimals: 2
+      filters:
+        - throttle_average: ${update_interval}
     power:
       name: "${human_devicename} Power"
       id: "${device_id}_power"
       accuracy_decimals: 2
+      filters:
+        - throttle_average: ${update_interval}
   - platform: total_daily_energy
     name: "${human_devicename} Total Daily Energy"
     power_id: "${device_id}_power"
@@ -67,13 +73,6 @@ switch:
     id: relay
     icon: ${icon}
     restore_mode: ${restore_mode}
-
-# Treat the Blue LED like any other light
-output:
-  - platform: esp8266_pwm
-    pin: GPIO13
-    inverted: True
-    id: led_blue
 
 status_led:
   pin: GPIO13

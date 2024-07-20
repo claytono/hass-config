@@ -1,7 +1,7 @@
 substitutions:
-  devicename: x1c-ams1-monitor
-  device_id: x1c_ams1_monitor
-  human_devicename: X1C AMS1 Monitor
+  devicename: x1c-ams2-monitor
+  device_id: x1c_ams2_monitor
+  human_devicename: X1C AMS2 Monitor
   icon: mdi:coolant-temperature
 
 packages:

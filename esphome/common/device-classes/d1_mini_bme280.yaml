@@ -10,7 +10,7 @@ i2c:
   scan: false
 
 sensor:
-  - platform: bme280
+  - platform: bme280_i2c
     address: 0x76
     temperature:
       name: "${human_devicename} Temperature"
