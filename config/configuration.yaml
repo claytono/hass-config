@@ -292,10 +292,6 @@ switch:
 
 template:
   - sensor:
-      freezer_door_metric:
-        value_template: >
-          freezer_door_status {{ 1 if is_state('binary_sensor.freezer_door_closed', 'on') else 0 }}
-  - sensor:
       - name: "Dead ZWave Devices"
         unique_id: dead_zwave_devices
         unit_of_measurement: entities
