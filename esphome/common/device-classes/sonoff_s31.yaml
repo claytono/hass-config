@@ -37,7 +37,8 @@ binary_sensor:
         then:
           - button.press: restart_button
   - platform: status
-    name: "${human_devicename} Status"
+    name: "${human_devicename} Home Assistant Connected"
+    id: "${device_id}_hass_status"
 
 sensor:
   - platform: cse7766
