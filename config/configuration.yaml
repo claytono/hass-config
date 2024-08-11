@@ -25,28 +25,11 @@ recorder:
 prometheus:
   namespace: hass
 
-# Send notifications to Telegram
-telegram_bot:
-  - platform: polling
-    api_key: !secret telegram_api_key
-    allowed_chat_ids:
-     - "-396790894"
-
 twilio:
   account_sid: !secret twilio_account_sid
   auth_token: !secret twilio_auth_token
 
 notify:
-- name: "telegram"
-  platform: telegram
-  chat_id: "-396790894"
-- name: "opsgenie"
-  platform: smtp
-  sender: clayton@oneill.net
-  recipient: email1@fnord.opsgenie.net
-  server: smtp.gmail.com
-  username: clayton.oneill@gmail.com
-  password: !secret gmail_smtp_password
 - name: "twilio_call"
   platform: twilio_call
   from_number: !secret twilio_number
@@ -66,30 +49,11 @@ notify:
     data:
       target: !secret my_phone
 
-netatmo:
-  client_id: !secret netatmo_client_id
-  client_secret: !secret netatmo_client_secret
-
 lutron_caseta:
   - host: lutron-032e18fd.oneill.net
     keyfile: caseta.key
     certfile: caseta.crt
     ca_certs: caseta-bridge.crt
-
-vera:
-  vera_controller_url: http://172.19.74.180:3480
-  exclude:
-    # Office
-    - 40 # office remote, dead battery, but might use one day, so not unpaired.
-    - 66 # Motion sensor
-    - 67 # Motion sensor 1
-    - 68 # Motion sensor 2
-    - 74 # Fake smoke sensor
-    - 75 # Motion sensor 3
-  lights:
-    - 8  # Garage overhead lights
-    - 19 # Office Floor Lamp
-    - 106 # Main floor bathroom light
 
 person:
 
@@ -108,8 +72,8 @@ homekit:
     - light.office_floor_lamp_19
     - light.office_light_76
     - light.office_sink_light
-    - lock.front_door_lock_10
-    - lock.garage_door_lock_88
+    - lock.front_door_lock
+    - lock.garage_door_lock
     - sensor.garage_humidity
     - sensor.garage_temperature
     - sensor.netatmo_indoor_humidity
@@ -119,6 +83,10 @@ homekit:
     - switch.smoker_158
     - binary_sensor.family_room_humidifier_empty
     - binary_sensor.dining_room_humidifier_empty
+    #    - climate.bed_jet_climate
+    - scene.get_ready_for_bed
+    - scene.good_night
+    - scene.good_morning
 
     # Caseta items
     - light.basement_office_main_lights
@@ -143,6 +111,7 @@ homekit:
     - switch.xbox
     - switch.playstation
     - switch.nintendo_switch
+    - switch.windows_pc
 
 # Cloud
 cloud:
@@ -150,20 +119,11 @@ cloud:
     filter:
       include_entities: *entity_whitelist
 
-# Discover some devices automatically
-discovery:
-
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
 
-# Enables support for tracking state changes over time
-history:
-
 # View all events in a logbook
 logbook:
-
-# Enables a map showing the location of tracked devices
-map:
 
 # Track the sun
 sun:
@@ -194,18 +154,6 @@ generic_hygrostat:
     target_sensor: sensor.living_room_humidity
     target_humidity: 40
 
-cover:
-  platform: opengarage
-  covers:
-    left_door:
-      host: og-left-door.oneill.net
-      device_key: !secret opengarage_device_key
-      name: "Left Garage Door"
-    right_door:
-      host: og-right-door.oneill.net
-      device_key: !secret opengarage_device_key
-      name: "Right Garage Door"
-
 light:
 - platform: switch
   name: Office Sink Light
@@ -226,7 +174,7 @@ switch:
   switches:
     basement_tv:
       friendly_name: "Basement TV"
-      value_template: "{{ not is_state_attr('remote.harmony_hub', 'current_activity', 'PowerOff') }}"
+      value_template: "{{ not is_state_attr('remote.harmony_hub', 'current_activity', 'power_off') }}"
       turn_on:
         service: remote.turn_on
         data:
@@ -284,6 +232,18 @@ switch:
         service: remote.turn_off
         data:
           entity_id: remote.harmony_hub
+    windows_pc:
+      friendly_name: "Windows PC"
+      value_template: "{{ is_state_attr('remote.harmony_hub', 'current_activity', 'Watch PC') }}"
+      turn_on:
+        service: remote.turn_on
+        data:
+          entity_id: remote.harmony_hub
+          activity: "Watch PC"
+      turn_off:
+        service: remote.turn_off
+        data:
+          entity_id: remote.harmony_hub
 
     main_floor_humidifiers:
       friendly_name: "Main Floor Humidifiers"
@@ -299,39 +259,68 @@ switch:
         - service: switch.turn_off
           entity_id: switch.family_room_humidifier_relay
 
+    foot_warmer_thermostat:
+      friendly_name: "Foot Warmer Thermostat"
+      value_template: "{{ is_state('climate.office_foot_warmer', 'heat') }}"
+      turn_on:
+        - service: climate.set_hvac_mode
+          target:
+            entity_id: climate.office_foot_warmer
+          data:
+            hvac_mode: 'heat'
+      turn_off:
+        - service: climate.set_hvac_mode
+          target:
+            entity_id: climate.office_foot_warmer
+          data:
+            hvac_mode: 'off'
+    office_heater_thermostat:
+      friendly_name: "Office Heater Thermostat"
+      value_template: "{{ is_state('climate.office_thermostat', 'heat') }}"
+      turn_on:
+        - service: climate.set_hvac_mode
+          target:
+            entity_id: climate.office_thermostat
+          data:
+            hvac_mode: 'heat'
+      turn_off:
+        - service: climate.set_hvac_mode
+          target:
+            entity_id: climate.office_thermostat
+          data:
+            hvac_mode: 'off'
+
+template:
+  - sensor:
+      freezer_door_metric:
+        value_template: >
+          freezer_door_status {{ 1 if is_state('binary_sensor.freezer_door_closed', 'on') else 0 }}
+  - sensor:
+      - name: "Dead ZWave Devices"
+        unique_id: dead_zwave_devices
+        unit_of_measurement: entities
+        state: >
+          {% if state_attr('sensor.dead_zwave_devices','entity_id') != none %}
+            {{ state_attr('sensor.dead_zwave_devices','entity_id') | count }}
+          {% else %}
+            {{ 0 }}
+          {% endif %}
+        attributes:
+          entity_id: >
+            {% set exclude_filter = ['sensor.700_series_based_controller_node_status'] %}
+            {{
+              expand(integration_entities('Z-Wave JS') )
+              | rejectattr("entity_id", "in", exclude_filter)
+              | selectattr("entity_id", "search", "node_status")
+              | selectattr('state', 'in', 'dead, unavailable, unknown')
+              | map(attribute="object_id")
+              | map('regex_replace', find='(.*)_node_status', replace='button.\\1_ping', ignorecase=False)
+              | list
+            }}
+
+
 # Sensors
 sensor:
-  - platform: template
-    sensors:
-      luser_watts:
-        value_template: >-
-          {{ state_attr('switch.luser_36', 'current_power_w') | default(0) }}
-        unit_of_measurement: "W"
-      k2_watts:
-        value_template: >-
-          {{ state_attr('switch.k2_98', 'current_power_w') | default(0) }}
-        unit_of_measurement: "W"
-      k3_watts:
-        value_template: >-
-          {{ state_attr('switch.k3_99', 'current_power_w') | default(0) }}
-        unit_of_measurement: "W"
-      sump_watts:
-        value_template: >-
-          {{ state_attr('switch.sump_pump_20', 'current_power_w') | default(0) }}
-        unit_of_measurement: "W"
-      dehumidifier_watts:
-        value_template: >-
-          {{ state_attr('switch.dehumidifier_110', 'current_power_w') | default(0) }}
-        unit_of_measurement: "W"
-      smoker_watts:
-        value_template: '{{ states.switch.smoker_158.attributes.current_power_w }}'
-        unit_of_measurement: "W"
-  - platform: template
-    sensors:
-      battery_front_door_lock:
-        friendly_name: "Front Door Lock Battery"
-        value_template: '{{ states.lock.front_door_lock_10.attributes.battery_level }}'
-        unit_of_measurement: "%"
   - platform: template
     # Airvisual sensors
     sensors:
@@ -357,13 +346,6 @@ sensor:
         unit_of_measurement: "ug/m3"
 
 binary_sensor:
-  # This monitors if my laptop is docked at my desk, which is a good proxy for
-  # whether or not I'm sitting there.
-  - platform: ping
-    name: laptop-ethernet
-    host: hajnal-ethernet.oneill.net
-  - platform: workday
-    country: US
   - platform: template
     sensors:
       freezer_too_warm:
@@ -371,7 +353,7 @@ binary_sensor:
         delay_on: "00:20:00"
         value_template: >
           {{ states("sensor.freezer_temperature") | float(999.0) == 999.0
-             or states("sensor.freezer_temperature") | float > 20 }}'
+             or states("sensor.freezer_temperature") | float > 20 }}
 
       main_floor_humidity_low:
         value_template: >
@@ -414,14 +396,14 @@ alert:
     - call_me
   computer_room_water:
     name: "Water is detected in the computer room!"
-    entity_id: binary_sensor.computer_room_water_sensor_water_alarm_water_leak_detected
+    entity_id: binary_sensor.computer_room_water_sensor_water_leak_detected
     state: "on"
     repeat: 10
     notifiers:
     - call_me
   storage_room_water:
     name: "Water is detected in the storage room!"
-    entity_id: binary_sensor.storage_water_sensor_170
+    entity_id: binary_sensor.storage_room_water_sensor_water_leak_detected
     state: "on"
     repeat: 10
     notifiers:
@@ -443,10 +425,33 @@ alert:
     notifiers:
     - call_me
 
+  freezer_door_open:
+    name: "Freezer Door Left Open"
+    done_message: "Freezer door is now closed."
+    entity_id: binary_sensor.freezer_door_closed
+    state: "off"
+    repeat: 10
+    skip_first: true
+    notifiers:
+      - slack
+  freezer_door_sensor_offline:
+    name: "Freezer sensor is offline"
+    entity_id: binary_sensor.freezer_door_sensor_status
+    state: "off"
+    repeat: 10
+    skip_first: true
+    notifiers:
+    - call_me
+
+
 # Text to speech
 tts:
   - platform: google_translate
 
 input_boolean: !include input_boolean.yaml
 #input_select: !include input_select.yaml
+automation: !include automations.yaml
+scene: !include scenes.yaml
+script: !include scripts.yaml
+
 
