@@ -1,0 +1,81 @@
+substitutions:
+  devicename: freezer-door
+  device_id: freezer_door
+  human_devicename: Freezer Door
+  icon: mdi:coolant-temperature
+
+packages:
+  wifi: !include common/wifi.yaml
+  base: !include common/base.yaml
+  web: !include common/web.yaml
+  d1_mini_bme280: !include common/device-classes/d1_mini.yaml
+
+binary_sensor:
+  - platform: gpio
+    name: "Freezer Door Closed"
+    pin:
+      number: D4
+      mode: INPUT_PULLUP
+      inverted: false
+    filters:
+      - delayed_on: 50ms
+      - delayed_off: 50ms
+    device_class: door
+    on_press:
+      - script.execute: reset_timer
+
+output:
+  - platform: esp8266_pwm
+    id: buzzer_pwm
+    pin: D5
+    min_power: 0%
+    max_power: 50%
+    inverted: false
+
+globals:
+  - id: buzzer_state
+    type: bool
+    initial_value: "false"
+  - id: door_duration
+    type: int
+    restore_value: no
+    initial_value: '0'
+
+switch:
+  - platform: template
+    name: "Buzzer Switch"
+    id: buzzer_switch
+    lambda: |-
+      return id(buzzer_state);
+    turn_on_action:
+      - output.turn_on: buzzer_pwm
+      - globals.set:
+          id: buzzer_state
+          value: "true"
+    turn_off_action:
+      - output.turn_off: buzzer_pwm
+      - globals.set:
+          id: buzzer_state
+          value: "false"
+
+sensor:
+  - platform: template
+    name: "${human_devicename} State Duration"
+    id: door_state_duration_sensor
+    lambda: |-
+      return id(door_duration);
+    unit_of_measurement: "s"
+    icon: "mdi:timer-outline"
+    update_interval: 1s
+
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          id(door_duration) += 1;
+
+script:
+  - id: reset_timer
+    then:
+      - lambda: |-
+          id(door_duration) = 0;
