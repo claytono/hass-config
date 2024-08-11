@@ -6,5 +6,6 @@ substitutions:
 
 packages:
   wifi: !include common/wifi.yaml
+  web: !include common/web.yaml
   base: !include common/base.yaml
   sonoff_s31: !include common/device-classes/sonoff_s31.yaml
