@@ -350,7 +350,10 @@ binary_sensor:
         value_template: >
           {{ states("sensor.freezer_temperature") | float(999.0) == 999.0
              or states("sensor.freezer_temperature") | float > 20 }}
-
+      freezer_door_open_delayed:
+        friendly_name: "Freezer Door Open Too Long"
+        delay_on: "00:05:00"
+        value_template: "{{ is_state('binary_sensor.freezer_door_closed', 'off') }}"
       main_floor_humidity_low:
         value_template: >
           {{ state_attr('sensor.main_floor_humidifier', 'humidity') | float(999.0) >
@@ -420,16 +423,15 @@ alert:
     skip_first: true
     notifiers:
     - call_me
-
   freezer_door_open:
     name: "Freezer Door Left Open"
     done_message: "Freezer door is now closed."
-    entity_id: binary_sensor.freezer_door_closed
-    state: "off"
+    entity_id: binary_sensor.freezer_door_open_delayed
+    state: "on"
     repeat: 10
     skip_first: true
     notifiers:
-      - slack
+      - future_planning_committee
   freezer_door_sensor_offline:
     name: "Freezer sensor is offline"
     entity_id: binary_sensor.freezer_door_sensor_status
@@ -437,7 +439,7 @@ alert:
     repeat: 10
     skip_first: true
     notifiers:
-    - call_me
+    - future_planning_committee
 
 
 # Text to speech
