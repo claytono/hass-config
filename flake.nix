@@ -7,7 +7,7 @@
   inputs = {
     flake-schemas.url = "https://flakehub.com/f/DeterminateSystems/flake-schemas/*";
 
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   };
 
   # Flake outputs that other flakes can use
@@ -28,6 +28,7 @@
           # Pinned packages available in the environment
           packages = with pkgs; [
             curl
+            esphome
             git
             gomplate
             jq
