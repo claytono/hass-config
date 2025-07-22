@@ -20,6 +20,21 @@ ios:
 recorder:
   db_url: !env_var DB_URL
 
+input_select:
+  hdfury_vrroom_source:
+    name: HDFury VRRoom Source
+    options:
+      - Apple TV
+      - PS5
+      - Xbox Series X
+      - Windows PC
+    icon: mdi:video-input-hdmi
+
+rest_command:
+  set_vrroom_input:
+    url: "http://vrroom-37.oneill.net/cmd?insel={{ input }}"
+    method: GET
+
 # Enables prometheus exporter
 prometheus:
   namespace: hass
@@ -339,6 +354,48 @@ sensor:
         friendly_name: "Airvisual PM2.5 Sensor Life"
         value_template: "{{  state_attr('air_quality.office_node_pro_air_quality', 'pm2_5_sensor_life') | default(0) }}"
         unit_of_measurement: "ug/m3"
+      harmony_vrroom_input:
+        friendly_name: "Harmony Expected VRRoom Input"
+        value_template: >-
+          {% set mapping = {
+            "Watch Apple TV": 0,
+            "Play PS5": 1,
+            "Play Xbox": 2,
+            "Watch PC": 3
+          } %}
+          {{ mapping.get(state_attr('remote.harmony_hub', 'current_activity'), -1) }}
+  - platform: rest
+    name: HDFury VRRoom Status
+    resource: http://vrroom-37.oneill.net/ssi/infopage.ssi
+    value_template: "{{ value_json.portseltx0}}"
+    json_attributes:
+      - portseltx0
+      - RX0
+      - RX1
+      - TX0
+      - TX1
+      - AUD0
+      - AUD1
+      - AUDOUT
+      - SINK0
+      - SINK1
+    scan_interval: '00:01'
+  - platform: template
+    sensors:
+      hdfury_vrroom_source:
+        friendly_name: "HDFury VRRoom Source"
+        value_template: >-
+          {% if states('sensor.hdfury_vrroom_status') | float == 0 %}
+          Apple TV
+          {% elif states('sensor.hdfury_vrroom_status') | float == 1 %}
+          PS5
+          {% elif states('sensor.hdfury_vrroom_status') | float == 2 %}
+          Xbox Series X
+          {% elif states('sensor.hdfury_vrroom_status') | float == 3 %}
+          Windows PC
+          {% else %}
+          Unknown
+          {% endif %}
 
 binary_sensor:
   - platform: template
