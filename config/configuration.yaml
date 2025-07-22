@@ -452,4 +452,148 @@ automation: !include automations.yaml
 scene: !include scenes.yaml
 script: !include scripts.yaml
 
+mqtt:
+  sensor:
+    - name: "Soil Moisture WH51 0eb421"
+      unique_id: "wh51_0eb421_moisture"
+      state_topic: "rtl_433/devices/Fineoffset-WH51/0eb421"
+      value_template: "{{ value_json.moisture }}"
+      unit_of_measurement: "%"
+      device_class: moisture
+      expire_after: 3600
+      json_attributes_topic: "rtl_433/devices/Fineoffset-WH51/0eb421"
+      json_attributes_template: >-
+        {{
+          {
+            "battery_ok": value_json.battery_ok,
+            "battery_mV": value_json.battery_mV,
+            "boost": value_json.boost,
+            "ad_raw": value_json.ad_raw
+          } | tojson
+        }}
+      device:
+        identifiers: ["wh51_0eb421"]
+        name: "WH51 Soil Moisture 0eb421"
+        model: "WH51"
+        manufacturer: "Ecowitt"
+        via_device: "rtl_433"
+
+    - name: "Soil Moisture WH51 0eb446"
+      unique_id: "wh51_0eb446_moisture"
+      state_topic: "rtl_433/devices/Fineoffset-WH51/0eb446"
+      value_template: "{{ value_json.moisture }}"
+      unit_of_measurement: "%"
+      device_class: moisture
+      expire_after: 3600
+      json_attributes_topic: "rtl_433/devices/Fineoffset-WH51/0eb446"
+      json_attributes_template: >-
+        {{
+          {
+            "battery_ok": value_json.battery_ok,
+            "battery_mV": value_json.battery_mV,
+            "boost": value_json.boost,
+            "ad_raw": value_json.ad_raw
+          } | tojson
+        }}
+      device:
+        identifiers: ["wh51_0eb446"]
+        name: "WH51 Soil Moisture 0eb446"
+        model: "WH51"
+        manufacturer: "Ecowitt"
+        via_device: "rtl_433"
+
+    - name: "Soil Moisture WH51 0eadc9 (Other Veggies)"
+      unique_id: "wh51_0eadc9_moisture"
+      state_topic: "rtl_433/devices/Fineoffset-WH51/0eadc9"
+      value_template: "{{ value_json.moisture }}"
+      unit_of_measurement: "%"
+      device_class: moisture
+      expire_after: 3600
+      json_attributes_topic: "rtl_433/devices/Fineoffset-WH51/0eadc9"
+      json_attributes_template: >-
+        {{
+          {
+            "battery_ok": value_json.battery_ok,
+            "battery_mV": value_json.battery_mV,
+            "boost": value_json.boost,
+            "ad_raw": value_json.ad_raw
+          } | tojson
+        }}
+      device:
+        identifiers: ["wh51_0eadc9"]
+        name: "WH51 Soil Moisture 0eadc9 (Other Veggies)"
+        model: "WH51"
+        manufacturer: "Ecowitt"
+        via_device: "rtl_433"
+
+    - name: "Soil Moisture WH51 0ed338 (Strawberries)"
+      unique_id: "wh51_0ed338_moisture"
+      state_topic: "rtl_433/devices/Fineoffset-WH51/0ed338"
+      value_template: "{{ value_json.moisture }}"
+      unit_of_measurement: "%"
+      device_class: moisture
+      expire_after: 3600
+      json_attributes_topic: "rtl_433/devices/Fineoffset-WH51/0ed338"
+      json_attributes_template: >-
+        {{
+          {
+            "battery_ok": value_json.battery_ok,
+            "battery_mV": value_json.battery_mV,
+            "boost": value_json.boost,
+            "ad_raw": value_json.ad_raw
+          } | tojson
+        }}
+      device:
+        identifiers: ["wh51_0ed338"]
+        name: "WH51 Soil Moisture 0ed338 (Strawberries)"
+        model: "WH51"
+        manufacturer: "Ecowitt"
+        via_device: "rtl_433"
+
+
+    - name: "Rain Meter WH40 51409"
+      unique_id: "wh40_51409_rain"
+      state_topic: "rtl_433/devices/EcoWitt-WH40/51409"
+      value_template: "{{ value_json.rain_mm }}"
+      unit_of_measurement: "mm"
+      device_class: precipitation
+      expire_after: 3600
+      json_attributes_topic: "rtl_433/devices/EcoWitt-WH40/51409"
+      json_attributes_template: >-
+        {{
+          {
+            "battery_V": value_json.battery_V,
+            "battery_ok": value_json.battery_ok,
+            "data": value_json.data
+          } | tojson
+        }}
+      device:
+        identifiers: ["wh40_51409"]
+        name: "WH40 Rain Meter 51409"
+        model: "WH40"
+        manufacturer: "Ecowitt"
+        via_device: "rtl_433"
+
+    - name: "Gas Meter Consumption"
+      unique_id: "scmplus_98864084_consumption"
+      state_topic: "rtl_433/devices/SCMplus/98864084"
+      value_template: "{{ (value_json.Consumption / 100) | round(2) }}"
+      unit_of_measurement: "CCF"
+      device_class: energy
+      state_class: total_increasing
+      expire_after: 3600
+      json_attributes_topic: "rtl_433/devices/SCMplus/98864084"
+      json_attributes_template: >-
+        {{
+          {
+            "MeterType": value_json.MeterType,
+            "Tamper": value_json.Tamper
+          } | tojson
+        }}
+      device:
+        identifiers: ["scmplus_98864084"]
+        name: "SCM+ Gas Meter 98864084"
+        model: "SCM+"
+        via_device: "rtl_433"
+
 
