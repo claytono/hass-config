@@ -1,0 +1,10 @@
+#!/bin/bash -xveu
+
+mkdir -p config-check
+rsync -avP config/ config-check/
+:>config-check/automations.yaml
+docker run \
+  -e DB_URL=fake \
+  -it --rm \
+  -v $(pwd)/config-check:/root/.homeassistant:ro homeassistant/home-assistant \
+  hass --script check_config
