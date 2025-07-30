@@ -6,8 +6,6 @@ require 'erb'
 KUBE_DIR = ENV['KUBE_CONFIG_DIR'] || "#{ENV['HOME']}/src/kubernetes-config/hass"
 CONFIG_DIR = File.join(__dir__, '..', 'config')
 
-sha1 = Digest::SHA1.new
-
 StringIO.open do |f|
   f.puts <<~EOS
     ---
@@ -17,27 +15,20 @@ StringIO.open do |f|
     kind: ConfigMap
     metadata:
       name: hass
-      labels:
-        hash: {{ HASH }}
     data:
     EOS
 
   ["*.yaml", "caseta*"].each do |pattern|
     Dir.glob("#{CONFIG_DIR}/#{pattern}").sort.each do |file|
       name = file.sub(CONFIG_DIR + '/', '')
-      sha1.update(name)
       f.puts "  #{name}: |-"
-
       data = File.read(file)
-      sha1.update(data)
       f.puts data.gsub(/^/, "    ")
     end
   end
 
-  puts "Hash: #{sha1.hexdigest}"
-  data = f.string.sub('{{ HASH }}', sha1.hexdigest)
   File.open("#{KUBE_DIR}/configmap.yaml", "w") do |cmfile|
-    cmfile.write(data)
+    cmfile.write(f.string)
   end
 end
 

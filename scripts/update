@@ -4,6 +4,5 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 KUBE_DIR=${KUBE_DIR:-$HOME/src/kubernetes-config/hass}
 
 "$BASEDIR/build-config"
-"$BASEDIR/build-deploy"
 
 kubectl apply -k $KUBE_DIR
