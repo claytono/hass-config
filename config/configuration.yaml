@@ -127,11 +127,6 @@ homekit:
     - switch.nintendo_switch
     - switch.windows_pc
 
-# Cloud
-cloud:
-  alexa:
-    filter:
-      include_entities: *entity_whitelist
 
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
