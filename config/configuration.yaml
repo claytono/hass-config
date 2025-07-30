@@ -722,7 +722,7 @@ mqtt:
       state_topic: "rtl_433/devices/SCMplus/98864084"
       value_template: "{{ (value_json.Consumption / 100) | round(2) }}"
       unit_of_measurement: "CCF"
-      device_class: energy
+      device_class: gas
       state_class: total_increasing
       expire_after: 3600
       json_attributes_topic: "rtl_433/devices/SCMplus/98864084"
