@@ -5,16 +5,18 @@ cd "$(dirname "$0")"
 
 usage() {
   cat >&2 <<'USAGE'
-Usage: ./compile-all [-j [JOBS]]
+Usage: ./compile-all [-j [JOBS]] [--shard N/TOTAL]
 
-Compiles all top-level ESPHome YAML configs in this directory (excluding secrets),
-running builds in parallel and saving logs to logs/<name>.log.
+Compiles all top-level ESPHome YAML configs in this directory (excluding secrets).
+Runs sequentially by default. With -j, runs in parallel and saves logs to logs/<name>.log.
 
-  -j [JOBS]   Number of parallel jobs. If omitted or -j is passed without a
-              value, uses the number of CPUs on this host.
+  -j [JOBS]   Enable parallel mode with JOBS workers. If omitted or -j is
+              passed without a value, uses the number of CPUs on this host.
+  --shard N/TOTAL  Only compile a subset of configs for CI sharding.
+                   N is 1-based shard index; TOTAL is shard count.
 
 Examples:
-  ./compile-all          # parallel with CPU cores
+  ./compile-all          # sequential
   ./compile-all -j 4     # parallel with 4 jobs
   ./compile-all -j       # parallel with CPU cores
 USAGE
@@ -33,22 +35,30 @@ default_jobs() {
   exit 2
 }
 
-# Default to CPU cores unless overridden by -j
-JOBS="$(default_jobs)"
+SHARD_INDEX=""; SHARD_TOTAL=""
+
+# Parallel disabled by default; set only when -j is used
+JOBS=""
 
 while (( "$#" )); do
   case "$1" in
     -j)
-      # Optional value: if provided, consume it; otherwise keep default
+      # Optional value: if provided, consume it; otherwise use CPU cores
       if [ $# -ge 2 ] && [[ "$2" != -* ]]; then
         JOBS="$2"; shift 2
       else
-        shift
+        JOBS="auto"; shift
       fi
       ;;
     -j*)
       # Support -j4 form
       JOBS="${1#-j}"; shift ;;
+    --shard)
+      # expects value like 1/4
+      shift
+      val="${1:-}"
+      [ -n "$val" ] || { echo "--shard requires N/TOTAL" >&2; usage; exit 2; }
+      SHARD_INDEX="${val%%/*}"; SHARD_TOTAL="${val##*/}"; shift ;;
     -h|--help)
       usage; exit 0 ;;
     --)
@@ -82,12 +92,65 @@ if [ ${#files[@]} -eq 0 ]; then
   echo "No top-level ESPHome YAML configs found." >&2
   exit 0
 fi
-# Always parallel mode
+
+# If sharding is requested, filter files to only this shard
+if [ -n "$SHARD_INDEX" ] && [ -n "$SHARD_TOTAL" ]; then
+  case "$SHARD_INDEX" in (*[!0-9]*) echo "Invalid shard index: $SHARD_INDEX" >&2; exit 2;; esac
+  case "$SHARD_TOTAL" in (*[!0-9]*) echo "Invalid shard total: $SHARD_TOTAL" >&2; exit 2;; esac
+  if [ "$SHARD_INDEX" -lt 1 ] || [ "$SHARD_TOTAL" -lt 1 ] || [ "$SHARD_INDEX" -gt "$SHARD_TOTAL" ]; then
+    echo "Shard must satisfy 1 <= N <= TOTAL" >&2; exit 2
+  fi
+  echo "Sharding: selecting shard $SHARD_INDEX of $SHARD_TOTAL"
+  selected=()
+  i=0
+  for f in "${files[@]}"; do
+    i=$((i+1))
+    # zero-based modulo
+    if [ $(((i-1) % SHARD_TOTAL)) -eq $((SHARD_INDEX-1)) ]; then
+      selected+=("$f")
+    fi
+  done
+  files=("${selected[@]}")
+  if [ ${#files[@]} -eq 0 ]; then
+    echo "Shard has no files to compile."
+    exit 0
+  fi
+fi
+
+# If -j was not provided, compile sequentially (streaming output)
+if [ -z "$JOBS" ]; then
+  failures=()
+  for f in "${files[@]}"; do
+    cfg=${f#./}
+    echo "==> Compiling ${cfg}"
+    if esphome compile "$cfg"; then
+      echo "✅ ${cfg} compiled successfully"
+    else
+      echo "❌ ${cfg} failed to compile" >&2
+      failures+=("${cfg}")
+    fi
+    echo
+  done
+
+  if [ ${#failures[@]} -ne 0 ]; then
+    echo "Failed configs:" >&2
+    for f in "${failures[@]}"; do
+      echo " - $f" >&2
+    done
+    exit 1
+  fi
+
+  echo "All configs compiled successfully."
+  exit 0
+fi
+
+# Parallel mode
 logs_dir="logs"
 mkdir -p "${logs_dir}"
+if [ "$JOBS" = "auto" ] || [ -z "$JOBS" ]; then
+  JOBS="$(default_jobs)"
+fi
 echo "Compiling ${#files[@]} configs with ${JOBS} parallel job(s). Logs in '${logs_dir}/'."
-
-statuses=()
 
 throttle() {
   # Limit number of background jobs
