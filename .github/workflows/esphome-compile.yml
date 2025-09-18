@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      esphome: ${{ steps.filter.outputs.esphome }}
+    steps:
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          esphome:
+            - 'esphome/**'
+
+  esphome-compile:
+    name: ESPHome Compile
+    runs-on: ubuntu-latest
+    needs: changes
+    strategy:
+      fail-fast: false
+      matrix:
+        shard_index: [1, 2, 3, 4]
+        shard_total: [4]
+    steps:
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5
+
+    - name: No esphome changes — skip
+      if: needs.changes.outputs.esphome != 'true'
+      run: echo "No changes under esphome/. Skipping compile."
+
+    - name: Enable user namespaces for bwrap
+      if: needs.changes.outputs.esphome == 'true'
+      run: |
+        sudo sysctl kernel.unprivileged_userns_clone=1
+        sudo apt-get update
+        sudo apt-get install -y uidmap
+
+    - name: Install Nix
+      if: needs.changes.outputs.esphome == 'true'
+      uses: cachix/install-nix-action@7be5dee1421f63d07e71ce6e0a9f8a4b07c2a487  # v31
+      with:
+        github_access_token: ${{ github.token }}
+
+    - name: Setup Cachix
+      if: needs.changes.outputs.esphome == 'true'
+      uses: cachix/cachix-action@0fc020193b5a1fa3ac4575aa3a7d3aa6a35435ad  # v16
+      with:
+        name: claytono
+        authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+    - name: Enable user namespaces for bwrap
+      if: needs.changes.outputs.esphome == 'true'
+      run: |
+        sudo sysctl kernel.unprivileged_userns_clone=1
+        sudo apt-get update
+        sudo apt-get install -y uidmap
+
+    - name: Create CI secrets.yaml (ephemeral)
+      if: needs.changes.outputs.esphome == 'true'
+      run: |
+        mkdir -p esphome
+        EK=$(openssl rand -base64 32)
+        cat > esphome/secrets.yaml <<YAML
+        encryption_key: "$EK"
+        wifi_ssid: "ci"
+        wifi_password: "ci-password"
+        ota: "ci-ota"
+
+        mqtt_host: "127.0.0.1"
+        mqtt_username: "ci"
+        mqtt_password: "ci"
+
+        web_username: "ci"
+        web_password: "ci"
+        YAML
+
+    - name: Run compile-all (shard ${{ matrix.shard_index }}/${{ matrix.shard_total }})
+      if: needs.changes.outputs.esphome == 'true'
+      run: |
+        nix develop --command ./esphome/compile-all -j 1 --shard ${{ matrix.shard_index }}/${{ matrix.shard_total }}
+
+    - name: Collect failed logs
+      if: needs.changes.outputs.esphome == 'true' && always()
+      run: |
+        mkdir -p esphome/logs_failed
+        for s in esphome/logs/*.status; do
+          [ -f "$s" ] || continue
+          if [ "$(cat "$s")" != "OK" ]; then
+            b="$(basename "$s" .status)"
+            cp -f "esphome/logs/$b.log" "esphome/logs_failed/$b.log" 2>/dev/null || true
+          fi
+        done
+
+    - name: Print failed logs
+      if: needs.changes.outputs.esphome == 'true' && always() && hashFiles('esphome/logs_failed/*.log') != ''
+      run: |
+        set -e
+        for f in esphome/logs_failed/*.log; do
+          echo "::group::$(basename "$f")"
+          # Print the last 400 lines for readability
+          tail -n 400 "$f" || true
+          echo "::endgroup::"
+        done
+
+    - name: Upload failed logs artifact
+      if: needs.changes.outputs.esphome == 'true' && always() && hashFiles('esphome/logs_failed/*.log') != ''
+      uses: actions/upload-artifact@v4  # v4
+      with:
+        name: esphome-logs-failed-${{ matrix.shard_index }}
+        path: esphome/logs_failed/
