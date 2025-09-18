@@ -15,8 +15,6 @@ http:
 # Enables configuration UI
 config:
 
-ios:
-
 recorder:
   db_url: !env_var DB_URL
 
@@ -325,7 +323,21 @@ template:
               | map('regex_replace', find='(.*)_node_status', replace='button.\\1_ping', ignorecase=False)
               | list
             }}
-
+  - binary_sensor:
+      - name: "Washer Running"
+        unique_id: washer_running
+        device_class: running
+        state: >
+          {% set p = states('sensor.washing_machine_electric_consumption_w')|float(0) %}
+          {% set was_on = (this.state == 'on') %}
+          {{ p > 18 or (was_on and p > 8) }}
+        delay_on:
+          seconds: 10
+        delay_off:
+          minutes: 3
+        availability: >
+          {{ states('sensor.washing_machine_electric_consumption_w')|float(-1) >= 0 }}
+          
 input_number:
   moisture_base: &moisture_base
     min: 0
