@@ -7,6 +7,5 @@ substitutions:
 packages:
   wifi: !include common/wifi.yaml
   base: !include common/base.yaml
-  ams_mponitor: !include common/ams-monitor.yaml
-
+  ams_monitor: !include common/ams-monitor.yaml
 
