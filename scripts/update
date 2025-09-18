@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-KUBE_DIR=${KUBE_DIR:-$HOME/src/kubernetes-config/hass}
+KUBE_DIR=${KUBE_DIR:-$HOME/src/infra/kubernetes/hass}
 
 "$BASEDIR/build-config"
 
