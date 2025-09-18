@@ -72,7 +72,7 @@ jobs:
     - name: Run compile-all (shard ${{ matrix.shard_index }}/${{ matrix.shard_total }})
       if: needs.changes.outputs.esphome == 'true'
       run: |
-        nix develop --command ./esphome/compile-all -j --shard ${{ matrix.shard_index }}/${{ matrix.shard_total }}
+        nix develop --command bash -lc 'esphome/compile-all -j --shard ${{ matrix.shard_index }}/${{ matrix.shard_total }}'
 
     - name: Collect failed logs
       if: needs.changes.outputs.esphome == 'true' && always()
