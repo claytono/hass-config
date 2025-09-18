@@ -86,6 +86,17 @@ jobs:
           fi
         done
 
+    - name: Print failed logs
+      if: needs.changes.outputs.esphome == 'true' && always() && hashFiles('esphome/logs_failed/*.log') != ''
+      run: |
+        set -e
+        for f in esphome/logs_failed/*.log; do
+          echo "::group::$(basename "$f")"
+          # Print the last 400 lines for readability
+          tail -n 400 "$f" || true
+          echo "::endgroup::"
+        done
+
     - name: Upload failed logs artifact
       if: needs.changes.outputs.esphome == 'true' && always() && hashFiles('esphome/logs_failed/*.log') != ''
       uses: actions/upload-artifact@v4  # v4
