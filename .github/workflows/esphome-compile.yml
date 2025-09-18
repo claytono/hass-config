@@ -44,6 +44,26 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y uidmap
 
+    - name: Install Nix
+      if: needs.changes.outputs.esphome == 'true'
+      uses: cachix/install-nix-action@7be5dee1421f63d07e71ce6e0a9f8a4b07c2a487  # v31
+      with:
+        github_access_token: ${{ github.token }}
+
+    - name: Setup Cachix
+      if: needs.changes.outputs.esphome == 'true'
+      uses: cachix/cachix-action@0fc020193b5a1fa3ac4575aa3a7d3aa6a35435ad  # v16
+      with:
+        name: claytono
+        authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+    - name: Enable user namespaces for bwrap
+      if: needs.changes.outputs.esphome == 'true'
+      run: |
+        sudo sysctl kernel.unprivileged_userns_clone=1
+        sudo apt-get update
+        sudo apt-get install -y uidmap
+
     - name: Create CI secrets.yaml (ephemeral)
       if: needs.changes.outputs.esphome == 'true'
       run: |
@@ -65,11 +85,8 @@ jobs:
 
     - name: Run compile-all (shard ${{ matrix.shard_index }}/${{ matrix.shard_total }})
       if: needs.changes.outputs.esphome == 'true'
-      env:
-        ESPHOME_DOCKER: "1"
-        ESPHOME_DOCKER_IMAGE: ghcr.io/esphome/esphome:2024.7.3
       run: |
-        ./esphome/compile-all -j 1 --shard ${{ matrix.shard_index }}/${{ matrix.shard_total }}
+        nix develop --command ./esphome/compile-all -j 1 --shard ${{ matrix.shard_index }}/${{ matrix.shard_total }}
 
     - name: Collect failed logs
       if: needs.changes.outputs.esphome == 'true' && always()
