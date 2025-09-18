@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  esphome-compile:
+    name: ESPHome Compile
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@7be5dee1421f63d07e71ce6e0a9f8a4b07c2a487  # v31
+      with:
+        github_access_token: ${{ github.token }}
+
+    - name: Setup Cachix
+      uses: cachix/cachix-action@0fc020193b5a1fa3ac4575aa3a7d3aa6a35435ad  # v16
+      with:
+        name: claytono
+        authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+    - name: Create CI secrets.yaml
+      run: |
+        mkdir -p esphome
+        cat > esphome/secrets.yaml <<'YAML'
+        encryption_key: "/Ok6p/eWShtPzWdqTPBzTKLQ17AkGrEFUnxVrw9xGGc="
+        wifi_ssid: "ci"
+        wifi_password: "ci-password"
+        ota: "ci-ota"
+
+        mqtt_host: "127.0.0.1"
+        mqtt_username: "ci"
+        mqtt_password: "ci"
+
+        web_username: "ci"
+        web_password: "ci"
+        YAML
+
+    - name: Run compile-all
+      run: nix develop --command ./esphome/compile-all -j

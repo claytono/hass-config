@@ -8,3 +8,5 @@
 **/src/
 **/platformio.ini
 /venv/
+/# CI compile logs
+/logs/
