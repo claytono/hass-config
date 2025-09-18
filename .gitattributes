@@ -2,3 +2,5 @@ secret*.yaml filter=git-crypt diff=git-crypt
 secret*.yml filter=git-crypt diff=git-crypt
 *secret.yaml filter=git-crypt diff=git-crypt
 caseta* filter=git-crypt diff=git-crypt
+# Do not encrypt the ESPHome secrets template
+esphome/secrets.tmpl.yaml -filter -diff
