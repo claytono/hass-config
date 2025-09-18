@@ -19,7 +19,7 @@ i2c:
     frequency: 800kHz
 
 sensor:
-  - platform: bme280
+  - platform: bme280_i2c
     i2c_id: bus_a
     address: 0x76
     temperature:
