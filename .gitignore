@@ -6,4 +6,5 @@
 **/src/
 **/platformio.ini
 /secrets.yaml
+esphome/secrets.yaml
 /config-check/
