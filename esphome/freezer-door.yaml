@@ -116,7 +116,7 @@ interval:
           then:
             - output.turn_on: status_led
           else:
-            - output.turn_off: status_led          
+            - output.turn_off: status_led
 
 script:
   - id: reset_timer

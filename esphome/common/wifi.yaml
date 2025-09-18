@@ -17,3 +17,7 @@ sensor:
     name: "${human_devicename} WiFi Signal"
     update_interval: 60s
     icon: mdi:wifi
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "${human_devicename} IP Address"

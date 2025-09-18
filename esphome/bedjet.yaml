@@ -20,9 +20,15 @@ ota:
 
 esp32_ble_tracker:
 
+logger:
+  logs:
+    esp32_ble_client: ERROR
+
 #text_sensor:
 #  - platform: ble_scanner
 #    name: "BLE Devices Scanner"
+
+mqtt: !remove
 
 ble_client:
   - mac_address: 08:D1:F9:0A:B9:0A
