@@ -3,7 +3,7 @@
 require 'digest'
 require 'erb'
 
-KUBE_DIR = ENV['KUBE_CONFIG_DIR'] || "#{ENV['HOME']}/src/kubernetes-config/hass"
+KUBE_DIR = ENV['KUBE_CONFIG_DIR'] || "#{ENV['HOME']}/src/infra/kubernetes/hass"
 CONFIG_DIR = File.join(__dir__, '..', 'config')
 
 StringIO.open do |f|
@@ -18,7 +18,7 @@ StringIO.open do |f|
     data:
     EOS
 
-  ["*.yaml", "caseta*"].each do |pattern|
+  ["*.yaml"].each do |pattern|
     Dir.glob("#{CONFIG_DIR}/#{pattern}").sort.each do |file|
       name = file.sub(CONFIG_DIR + '/', '')
       f.puts "  #{name}: |-"
