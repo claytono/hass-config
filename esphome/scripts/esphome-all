@@ -1,24 +1,29 @@
 #!/usr/bin/env bash
 set -uo pipefail
 
-cd "$(dirname "$0")"
+# Get to the esphome directory (parent of scripts)
+cd "$(dirname "$0")/.." || exit 1
 
 usage() {
   cat >&2 <<'USAGE'
-Usage: ./compile-all [-j [JOBS]] [--shard N/TOTAL]
+Usage: ./esphome-all COMMAND [-j [JOBS]] [--shard N/TOTAL] [-- [ESPHOME_ARGS]]
 
-Compiles all top-level ESPHome YAML configs in this directory (excluding secrets).
+Runs an ESPHome command on all top-level YAML configs in this directory (excluding secrets).
 Runs sequentially by default. With -j, runs in parallel and saves logs to logs/<name>.log.
 
-  -j [JOBS]   Enable parallel mode with JOBS workers. If omitted or -j is
-              passed without a value, uses the number of CPUs on this host.
-  --shard N/TOTAL  Only compile a subset of configs for CI sharding.
-                   N is 1-based shard index; TOTAL is shard count.
+  COMMAND         ESPHome command to run (e.g., compile, upload, clean, logs)
+  -j [JOBS]       Enable parallel mode with JOBS workers. If omitted or -j is
+                  passed without a value, uses the number of CPUs on this host.
+  --shard N/TOTAL Only process a subset of configs for CI sharding.
+                  N is 1-based shard index; TOTAL is shard count.
+  -- [ARGS]       Additional arguments to pass to esphome
 
 Examples:
-  ./compile-all          # sequential
-  ./compile-all -j 4     # parallel with 4 jobs
-  ./compile-all -j       # parallel with CPU cores
+  ./esphome-all compile           # compile all configs sequentially
+  ./esphome-all compile -j 4      # compile with 4 parallel jobs
+  ./esphome-all clean             # clean all configs
+  ./esphome-all upload            # upload to all devices
+  ./esphome-all logs -- --follow  # tail logs from all devices
 USAGE
 }
 
@@ -35,10 +40,19 @@ default_jobs() {
   exit 2
 }
 
-SHARD_INDEX=""; SHARD_TOTAL=""
+# Parse command first
+if [ $# -eq 0 ]; then
+  echo "Error: COMMAND is required" >&2
+  usage
+  exit 2
+fi
 
-# Parallel disabled by default; set only when -j is used
+COMMAND="$1"
+shift
+
+SHARD_INDEX=""; SHARD_TOTAL=""
 JOBS=""
+ESPHOME_ARGS=()
 
 while (( "$#" )); do
   case "$1" in
@@ -62,7 +76,9 @@ while (( "$#" )); do
     -h|--help)
       usage; exit 0 ;;
     --)
-      shift; break ;;
+      shift;
+      ESPHOME_ARGS=("$@")
+      break ;;
     -*)
       echo "Unknown option: $1" >&2; usage; exit 2 ;;
     *)
@@ -70,14 +86,18 @@ while (( "$#" )); do
   esac
 done
 
-if ! command -v esphome >/dev/null 2>&1; then
+# Use our wrapper script if it exists, otherwise fall back to esphome in PATH
+ESPHOME_CMD="esphome"
+if [ -f "scripts/esphome" ] && [ -x "scripts/esphome" ]; then
+  ESPHOME_CMD="scripts/esphome"
+elif ! command -v esphome >/dev/null 2>&1; then
   echo "esphome CLI not found in PATH" >&2
   exit 127
 fi
 
 # Warn if secrets are missing
 if [ ! -f secrets.yaml ] && [ -f secrets.tmpl ]; then
-  echo "Note: secrets.yaml not found; run ./render to generate it" >&2
+  echo "Note: secrets.yaml not found; run scripts/bootstrap-secrets to generate it" >&2
 fi
 
 # Discover top-level YAML configs, excluding secrets templates/files
@@ -112,21 +132,21 @@ if [ -n "$SHARD_INDEX" ] && [ -n "$SHARD_TOTAL" ]; then
   done
   files=("${selected[@]}")
   if [ ${#files[@]} -eq 0 ]; then
-    echo "Shard has no files to compile."
+    echo "Shard has no files to process."
     exit 0
   fi
 fi
 
-# If -j was not provided, compile sequentially (streaming output)
+# If -j was not provided, run sequentially (streaming output)
 if [ -z "$JOBS" ]; then
   failures=()
   for f in "${files[@]}"; do
     cfg=${f#./}
-    echo "==> Compiling ${cfg}"
-    if esphome compile "$cfg"; then
-      echo "✅ ${cfg} compiled successfully"
+    echo "==> Running 'esphome $COMMAND' on ${cfg}"
+    if "$ESPHOME_CMD" "$COMMAND" "$cfg" "${ESPHOME_ARGS[@]}"; then
+      echo "✅ ${cfg} succeeded"
     else
-      echo "❌ ${cfg} failed to compile" >&2
+      echo "❌ ${cfg} failed" >&2
       failures+=("${cfg}")
     fi
     echo
@@ -140,7 +160,7 @@ if [ -z "$JOBS" ]; then
     exit 1
   fi
 
-  echo "All configs compiled successfully."
+  echo "All configs processed successfully."
   exit 0
 fi
 
@@ -150,7 +170,7 @@ mkdir -p "${logs_dir}"
 if [ "$JOBS" = "auto" ] || [ -z "$JOBS" ]; then
   JOBS="$(default_jobs)"
 fi
-echo "Compiling ${#files[@]} configs with ${JOBS} parallel job(s). Logs in '${logs_dir}/'."
+echo "Running 'esphome $COMMAND' on ${#files[@]} configs with ${JOBS} parallel job(s). Logs in '${logs_dir}/'."
 
 throttle() {
   # Limit number of background jobs
@@ -171,7 +191,7 @@ for f in "${files[@]}"; do
   printf "Queued %s\n" "$cfg"
   throttle
   (
-    esphome compile "$cfg" >"$log_file" 2>&1
+    "$ESPHOME_CMD" "$COMMAND" "$cfg" "${ESPHOME_ARGS[@]}" >"$log_file" 2>&1
     rc=$?
     if [ $rc -eq 0 ]; then
       echo OK >"$status_file"
@@ -204,4 +224,3 @@ for f in "${files[@]}"; do
 done
 
 exit $([ "$fail_count" -eq 0 ] && echo 0 || echo 1)
-
