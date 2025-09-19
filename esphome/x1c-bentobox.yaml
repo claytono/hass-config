@@ -10,7 +10,8 @@ packages:
 
 esphome:
   name: "${devicename}"
-  platform: ESP32
+
+esp32:
   board: az-delivery-devkit-v4
 
 # Enable logging

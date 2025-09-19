@@ -28,7 +28,6 @@
           # Pinned packages available in the environment
           packages = with pkgs; [
             curl
-            esphome
             git
             gomplate
             jq
