@@ -3,6 +3,9 @@
 # ESPHome Docker wrapper script
 # Uses the official ESPHome Docker image to run ESPHome commands
 
+# Fail fast
+set -Eeuo pipefail
+
 # ESPHome version
 ESPHOME_VERSION="2025.8.4"
 
@@ -17,6 +20,12 @@ cd "$ESPHOME_DIR" || exit 1
 
 # Docker image
 DOCKER_IMAGE="ghcr.io/esphome/esphome:${ESPHOME_VERSION}"
+
+# Ensure docker is available
+if ! command -v docker >/dev/null 2>&1; then
+  echo "Error: docker not found in PATH" >&2
+  exit 127
+fi
 
 # Version-specific volume names
 PLATFORMIO_VOLUME="esphome-platformio-${ESPHOME_VERSION}"
