@@ -28,8 +28,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard_index: [1, 2, 3, 4]
-        shard_total: [4]
+        shard_index: [1, 2, 3, 4, 5, 6, 7, 8]
+        shard_total: [8]
     steps:
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5
 
@@ -37,9 +37,6 @@ jobs:
       if: needs.changes.outputs.esphome != 'true'
       run: echo "No changes under esphome/. Skipping compile."
 
-    - name: Set up Docker Buildx
-      if: needs.changes.outputs.esphome == 'true'
-      uses: docker/setup-buildx-action@v3
 
     - name: Create CI secrets.yaml (ephemeral)
       if: needs.changes.outputs.esphome == 'true'
@@ -88,6 +85,7 @@ jobs:
           tail -n 400 "$f" || true
           echo "::endgroup::"
         done
+        exit 1
 
     - name: Upload failed logs artifact
       if: needs.changes.outputs.esphome == 'true' && always() && hashFiles('esphome/logs_failed/*.log') != ''
