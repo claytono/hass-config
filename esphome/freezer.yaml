@@ -6,6 +6,7 @@ substitutions:
 
 packages:
   wifi: !include common/wifi.yaml
+  web: !include common/web.yaml
   base: !include common/base.yaml
 
 esphome:
