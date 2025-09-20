@@ -9,28 +9,3 @@ packages:
   web: !include common/web.yaml
   base: !include common/base.yaml
   sonoff_s31: !include common/device-classes/sonoff_s31.yaml
-
-switch:
-  - platform: gpio
-    id: !extend relay
-    internal: true
-
-output:
-  - platform: template
-    id: relay_output
-    type: binary
-    write_action:
-      - if:
-          condition:
-            - light.is_on: relay_light
-          then:
-            - switch.turn_on: relay
-          else:
-            - switch.turn_off: relay
-
-light:
-  - platform: binary
-    name: "${human_devicename} Light"
-    output: relay_output
-    id: relay_light
-    icon: ${icon}
