@@ -1,5 +1,6 @@
 /.vscode
 /.esphome/
+.direnv/
 **/.pioenvs/
 **/.piolibdeps/
 **/lib/
