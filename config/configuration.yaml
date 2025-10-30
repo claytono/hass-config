@@ -513,12 +513,6 @@ sensor:
 binary_sensor:
   - platform: template
     sensors:
-      freezer_too_warm:
-        device_class: problem
-        delay_on: "00:20:00"
-        value_template: >
-          {{ states("sensor.freezer_temperature") | float(999.0) == 999.0
-             or states("sensor.freezer_temperature") | float > 25 }}
       garage_freezer_too_warm:
         friendly_name: "Garage Freezer Too Warm"
         device_class: problem
@@ -539,7 +533,7 @@ binary_sensor:
         delay_on: "00:20:00"
         value_template: >
           {{ states("sensor.refrigerator_freezer_temperature") | float(999.0) == 999.0
-             or states("sensor.refrigerator_freezer_temperature") | float > 0 }}
+             or states("sensor.refrigerator_freezer_temperature") | float > 10 }}
       freezer_door_open_delayed:
         friendly_name: "Freezer Door Open Too Long"
         delay_on: "00:05:00"
@@ -591,13 +585,6 @@ alert:
   storage_room_water:
     name: "Water is detected in the storage room!"
     entity_id: binary_sensor.storage_room_water_sensor_water_leak_detected
-    state: "on"
-    repeat: 10
-    notifiers:
-    - call_me
-  freezer_too_warm:
-    name: "Temperature in the freezer is too warm!"
-    entity_id: binary_sensor.freezer_too_warm
     state: "on"
     repeat: 10
     notifiers:
